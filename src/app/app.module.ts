@@ -19,6 +19,11 @@ import { WebviewDirective } from './directives/webview.directive';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
+import { DirectivesModule } from './directives/directives.module';
+import { SoundsService } from './providers/sounds.provider';
+import { NouisliderModule } from 'ng2-nouislider';
+import 'rxjs/Rx';
+import { PipesModule } from './pipes/pipes.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -36,6 +41,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
+    DirectivesModule,
+    NouisliderModule,
+    PipesModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -44,7 +52,10 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     })
   ],
-  providers: [ElectronService],
+  providers: [
+    ElectronService,
+    SoundsService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,11 +1,10 @@
 {
-  "name": "angular-electron",
-  "version": "3.3.0",
-  "description": "Angular 5 with Electron (Typescript + SASS + Hot Reload)",
-  "homepage": "https://github.com/maximegris/angular-electron",
+  "name": "pointblanc-soundbox",
+  "version": "1.0.0",
+  "description": "Point Blanc Soundbox",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "Alan Balbo",
+    "email": "alan.balbo@gmail.com"
   },
   "keywords": [
     "angular",
@@ -34,7 +33,10 @@
     "pree2e:protractor": "wait-on http-get://localhost:4200/ && protractor ./protractor.conf.js",
     "e2e": "npm-run-all -p -r pree2e:build pree2e:protractor"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ng2-nouislider": "^1.7.8",
+    "nouislider": "^11.1.0"
+  },
   "devDependencies": {
     "@angular/cli": "1.7.4",
     "@angular/common": "5.2.9",

@@ -1,5 +1,25 @@
 <div class="container">
-  <h1 class="title">
-    {{ 'PAGES.HOME.TITLE' | translate }}
-  </h1>
+  <div class="title">
+    <nouislider class="volume-slider" [min]="0" [max]="1" [(ngModel)]="volume"></nouislider>
+    <h1>
+      {{ 'PAGES.HOME.TITLE' | translate }}
+    </h1>
+    <div class="group">
+      <input type="text" class="searchbar" [(ngModel)]="nameFilter">
+      <button class="action-btn very-small" [ngClass]="{'active': smallbtn}" (click)="smallbtn = !smallbtn">Petit boutons</button>
+    </div>
+  </div>
+  <div *ngIf="!loading && !error" class="buttons-list">
+    <button pb-button class="action-btn" [ngClass]="{'small': smallbtn}" (click)="playSound(item.name)" *ngFor="let item of lib | filterName: nameFilter">{{item.name}}</button> 
+  </div>
+  <div *ngIf="loading" class="buttons-list">
+      <div class="bouncing-loader">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+  </div>
+  <div *ngIf="!loading && error" class="buttons-list">
+      <button pb-button class="small error" (click)="load()">Réessayer</button> 
+  </div>
 </div>
