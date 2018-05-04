@@ -11,8 +11,16 @@ export class HomeComponent implements OnInit {
   error;
   lib;
   _volume;
+  _online;
   nameFilter;
   smallbtn;
+  get online() {
+    return this._online;
+  }
+  set online(val) {
+    this._online = val;
+    this.soundsService.online = val;
+  }
 
   get volume() {
     return this._volume;
@@ -22,7 +30,11 @@ export class HomeComponent implements OnInit {
     this.soundsService.setVolume(val);
   }
 
-  constructor(private soundsService: SoundsService) { }
+  constructor(private soundsService: SoundsService) {
+    this.volume = 1;
+    this.online = true;
+    this.soundsService.changeStatus$.subscribe((online) => this._online = online);
+  }
 
   ngOnInit() {
     this.load();

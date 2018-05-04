@@ -6,7 +6,8 @@
     </h1>
     <div class="group">
       <input type="text" class="searchbar" [(ngModel)]="nameFilter">
-      <button class="action-btn very-small" [ngClass]="{'active': smallbtn}" (click)="smallbtn = !smallbtn">Petit boutons</button>
+      <button class="action-btn very-small" [ngClass]="{'active': smallbtn}" (click)="smallbtn = !smallbtn">Petit</button>
+      <button class="action-btn very-small" [ngClass]="{'active': online}" (click)="online = !online">{{online ? 'On' : 'Off'}}</button>
     </div>
   </div>
   <div *ngIf="!loading && !error" class="buttons-list">

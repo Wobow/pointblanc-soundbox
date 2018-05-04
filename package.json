@@ -1,6 +1,6 @@
 {
   "name": "pointblanc-soundbox",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Point Blanc Soundbox",
   "author": {
     "name": "Alan Balbo",
@@ -34,8 +34,10 @@
     "e2e": "npm-run-all -p -r pree2e:build pree2e:protractor"
   },
   "dependencies": {
+    "@types/socket.io-client": "^1.4.32",
     "ng2-nouislider": "^1.7.8",
-    "nouislider": "^11.1.0"
+    "nouislider": "^11.1.0",
+    "socket.io-client": "^2.1.0"
   },
   "devDependencies": {
     "@angular/cli": "1.7.4",
