@@ -16,7 +16,7 @@ export class SoundsService {
   }
   changeStatus$ = new Subject<boolean>();
   private _online: boolean;
-  private wsUrl = 'ws://localhost:4242/';
+  private wsUrl = 'ws://api.soundbox.alan-balbo.com/';
   private socketInterface: Subject<MessageEvent>;
   private socket;
 
@@ -82,8 +82,7 @@ export class SoundsService {
   }
 
   loadSoundLibrary() {
-    // return this.http.get('http://api.soundbox.alan-balbo.com/api/commands')
-    return this.http.get('http://localhost:4242/api/commands')
+    return this.http.get('http://api.soundbox.alan-balbo.com/api/commands')
       .first()
       .do((result) => this.library = result);
   }
