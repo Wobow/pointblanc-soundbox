@@ -4,7 +4,7 @@ import '../polyfills';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -24,6 +24,8 @@ import { SoundsService } from './providers/sounds.provider';
 import { NouisliderModule } from 'ng2-nouislider';
 import 'rxjs/Rx';
 import { PipesModule } from './pipes/pipes.module';
+import { ClarityModule } from '@clr/angular';
+import { LobbyService } from './providers/lobbies.service';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -39,11 +41,13 @@ export function HttpLoaderFactory(http: HttpClient) {
   imports: [
     BrowserModule,
     FormsModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
     DirectivesModule,
     NouisliderModule,
     PipesModule,
+    ClarityModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -55,6 +59,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     ElectronService,
     SoundsService,
+    LobbyService,
   ],
   bootstrap: [AppComponent]
 })

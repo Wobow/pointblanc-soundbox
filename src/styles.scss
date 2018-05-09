@@ -5,6 +5,10 @@ html, body {
 
   height: 100%;
 }
+$primary-color: #2C9E56;
+.header.header-8 {
+  background-color: $primary-color;
+}
 @import "~nouislider/distribute/nouislider.min.css";
 
 .volume-slider {
@@ -157,4 +161,24 @@ $listHeight: calc(100vh - 100px);
     }
   }
 
+}
+
+.btn.btn-sb {
+  color: #FFF;
+  border-color: $primary-color;
+  background-color: $primary-color;
+  &:hover {
+    background-color: lighten($primary-color, 10);
+    color: #FFF;
+  }
+  &.btn-outline {
+    border-color: $primary-color;
+    color: lighten($primary-color, 10);
+    &:hover {
+      color: lighten($primary-color, 20);
+    }
+  }
+}
+button:focus, a:focus {
+  outline: 0!important;
 }

@@ -34,7 +34,12 @@
     "e2e": "npm-run-all -p -r pree2e:build pree2e:protractor"
   },
   "dependencies": {
+    "@angular/animations": "^6.0.0",
+    "@clr/angular": "^0.11.16",
+    "@clr/icons": "^0.11.16",
+    "@clr/ui": "^0.11.16",
     "@types/socket.io-client": "^1.4.32",
+    "@webcomponents/custom-elements": "^1.1.0",
     "ng2-nouislider": "^1.7.8",
     "nouislider": "^11.1.0",
     "socket.io-client": "^2.1.0"

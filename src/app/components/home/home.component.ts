@@ -1,12 +1,15 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, AfterViewInit } from '@angular/core';
 import { SoundsService } from '../../providers/sounds.provider';
+import { Animations } from '../../animations';
+import { LobbyService } from '../../providers/lobbies.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  animations: [Animations.showHideHorizontal, Animations.showHide],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   loading;
   error;
   lib;
@@ -14,6 +17,11 @@ export class HomeComponent implements OnInit {
   _online;
   nameFilter;
   smallbtn;
+  inviteLink;
+  serverName;
+  modalLoading;
+  createNewServer;
+  lobbies;
   get online() {
     return this._online;
   }
@@ -30,10 +38,17 @@ export class HomeComponent implements OnInit {
     this.soundsService.setVolume(val);
   }
 
-  constructor(private soundsService: SoundsService) {
+  constructor(private soundsService: SoundsService, private lobbyService: LobbyService) {
     this.volume = 1;
     this.online = true;
     this.soundsService.changeStatus$.subscribe((online) => this._online = online);
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.inviteLink = '';
+      this.serverName = '';
+    }, 200);
   }
 
   ngOnInit() {
@@ -42,20 +57,26 @@ export class HomeComponent implements OnInit {
   }
 
   load() {
-    if (this.loading) { return; }
-    this.loading = true;
-    this.soundsService.loadSoundLibrary()
-      .finally(() => this.loading = false)
-      .subscribe((res: any) => {
-        this.lib = res.sort((a, b) => {
-          return a.name.localeCompare(b.name);
-        });
-        this.error = false;
-      }, () => this.error = true);
+    this.lobbyService.loadLobbies()
+      .subscribe((lobbies) => this.lobbies = lobbies);
   }
 
-  playSound(name) {
-    this.soundsService.playSoundByName(name);
+  createServer() {
+    if (this.modalLoading) { return; }
+    this.modalLoading = true;
+    this.error = false;
+    this.lobbyService.create(this.serverName)
+      .first()
+      .finally(() => {
+        this.modalLoading = false;
+      })
+      .subscribe((server) => {
+        this.serverName = '';
+        this.createNewServer = false;
+      }, (err) => {
+        console.error(err);
+        this.error = true;
+      });
   }
 
 }
