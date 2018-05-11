@@ -21,6 +21,7 @@ export class SoundsService {
   private socket;
 
   constructor(private http: HttpClient) {
+    this.volume = 1;
     this.changeStatus$.subscribe((status) => {
       if (status) {
         this.socketInterface = this.initializeWebSocketConnection();
@@ -98,6 +99,9 @@ export class SoundsService {
   getSoundByName(name: string) {
     return this.library.find((item) => item.name === name);
   }
+  getSoundById(id: string) {
+    return this.library.find((item) => item._id === id);
+  }
 
   play(command) {
     if (command && command.url) {
@@ -115,6 +119,14 @@ export class SoundsService {
 
   playSoundByName(name: string) {
     const sound = this.getSoundByName(name);
+    if (!this.online) {
+      this.play(sound);
+    } else {
+      this.publish(sound._id);
+    }
+  }
+  playSoundById(id: string) {
+    const sound = this.getSoundById(id);
     if (!this.online) {
       this.play(sound);
     } else {

@@ -182,3 +182,90 @@ $listHeight: calc(100vh - 100px);
 button:focus, a:focus {
   outline: 0!important;
 }
+
+.page-container {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  min-height: 100%;
+}
+.subnav {
+  width: 100vw;
+  display: block;
+}
+.lobby-content {
+  display: flex;
+  width: 100%;
+  display: flex;
+  flex: 1 0 auto;
+}
+.with-icon {
+  clr-icon {
+    margin-right: 1em;
+  }
+}
+.dropdown-menu {
+  border: 0;
+  &.dropdown-divider {
+    color: #231f20;
+  }
+}
+.btn-icon {
+  background-color: transparent;
+  border: 0;
+  color: #FFF;
+  padding: 0 .5em;
+  cursor: pointer;
+  border-radius: 50%;
+  &:active {
+    background-color: #141213;
+  }
+}
+
+.form-group {
+  position: relative;
+  width: 80%;
+  .form-input {
+    position: relative;
+    width: 100%;
+    input {
+      border: 1px solid #999;
+      border-radius: 5px;
+      padding: 1rem;
+      width: 100%;
+    }
+    .inset-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      margin: 0;
+      box-sizing: border-box;
+      transition: all .25s ease-out;
+      opacity: 1;
+      &.hidden {
+        opacity: 0;
+        display: block;
+        overflow: 'hidden';
+        pointer-events: none;
+      }
+    }
+  }
+  .input-help {
+    display: block;
+    font-size: .5rem;
+  }
+  .icon-validation {
+    position: absolute;
+    right: 1em;
+    top: 1.2em;
+    font-weight: bold;
+    &.valid {
+      color: #0F0;
+    }
+    &.invalid {
+      color: #F00;
+    }
+  }
+}

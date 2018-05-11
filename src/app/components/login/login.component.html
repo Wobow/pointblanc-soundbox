@@ -1,0 +1,62 @@
+<div class="main-content">
+    <div class="login-popin">
+      <ng-container *ngIf="!registerMode">
+          <h4>Connexion</h4>
+          <clr-alert style="margin-bottom: 1em" [clrAlertType]="'alert-danger'" *ngIf="error">
+              <div clr-alert-item class="alert-item">
+                  <span class="alert-text">
+                    Impossible de se connecter : {{error.message}}
+                  </span>
+              </div>
+          </clr-alert>
+          <div class="form-group">
+            <div class="form-input">
+              <label>Pseudo</label>
+              <input type="text" name="" placeholder="" [(ngModel)]="username">
+            </div>
+            <div class="form-input">
+              <label>Mot de passe</label>
+              <input type="password" name="" placeholder="" [(ngModel)]="password">
+            </div>
+            <span class="input-help"><a href="javascript:;" (click)="registerMode = true">Créer un compte</a></span>
+            <div align="right">
+                <button class="btn btn-sb" (click)="login()">Connexion</button>
+            </div>
+          </div>
+      </ng-container>
+      <ng-container *ngIf="registerMode">
+          <h4>Créer un compte</h4>
+          <clr-alert style="margin-bottom: 1em" [clrAlertType]="'alert-danger'" *ngIf="password && confirmPassword && confirmPassword !== password">
+              <div clr-alert-item class="alert-item">
+                  <span class="alert-text">
+                      Les mots de passe de correspondent pas.
+                  </span>
+              </div>
+          </clr-alert>
+          <clr-alert style="margin-bottom: 1em" [clrAlertType]="'alert-danger'" *ngIf="error">
+              <div clr-alert-item class="alert-item">
+                  <span class="alert-text">
+                    Impossible de finaliser l'inscription : {{error.message}}
+                  </span>
+              </div>
+          </clr-alert>
+          <div class="form-group">
+            <div class="form-input">
+              <label>Pseudo</label>
+              <input type="text" name="" placeholder="" [(ngModel)]="username">
+            </div>
+            <div class="form-input">
+              <label>Mot de passe</label>
+              <input type="password" name="" placeholder="" [(ngModel)]="password">
+            </div>
+            <div class="form-input">
+              <label>Confirmez le mot de passe</label>
+              <input type="password" name="" placeholder="" [(ngModel)]="confirmPassword">
+            </div>
+            <span class="input-help"><a href="javascript:;" (click)="registerMode = false">Déjà un compte ?</a></span>
+            <div align="right">
+                <button class="btn btn-sb" [disabled]="!password || !confirmPassword || confirmPassword !== password || !username" (click)="register()">Inscription</button>
+            </div>
+          </div>
+      </ng-container>
+</div>

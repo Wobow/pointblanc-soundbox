@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -18,7 +18,6 @@ import { ElectronService } from './providers/electron.service';
 import { WebviewDirective } from './directives/webview.directive';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './components/home/home.component';
 import { DirectivesModule } from './directives/directives.module';
 import { SoundsService } from './providers/sounds.provider';
 import { NouisliderModule } from 'ng2-nouislider';
@@ -26,6 +25,12 @@ import 'rxjs/Rx';
 import { PipesModule } from './pipes/pipes.module';
 import { ClarityModule } from '@clr/angular';
 import { LobbyService } from './providers/lobbies.service';
+import { LobbyComponent } from './components/lobby/lobby.component';
+import { AuthService } from './providers/auth.provider';
+import { AuthGuard } from './guards/auth.guard';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { LoginComponent } from './components/login/login.component';
+import { TokenInterceptor } from './auth.interceptor';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -35,8 +40,10 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    WebviewDirective
+    LoginComponent,
+    WebviewDirective,
+    LobbyComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +66,14 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [
     ElectronService,
     SoundsService,
+    AuthGuard,
+    AuthService,
     LobbyService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })

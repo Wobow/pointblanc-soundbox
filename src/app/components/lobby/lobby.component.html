@@ -1,0 +1,175 @@
+
+<div class="page-container">
+    <div class="server-info-ctn">
+      <div class="thumbnail">
+        <div class="server-icon">{{server?.name }}</div>
+      </div>
+      <div class="basic-info">
+          <div class="name">{{server?.name || 'Server'}}</div>
+          <div class="members">{{server?.members?.length || '1'}} membre(s)</div>
+      </div>
+      <div class="modes-info">
+        <div class="mode" *ngIf="queueMode"><clr-icon shape="check"></clr-icon>Queue mode</div>
+        <div class="mode" *ngIf="slowMode"><clr-icon shape="check"></clr-icon>Slow mode</div>
+        <div class="mode" *ngIf="comboMode"><clr-icon shape="check"></clr-icon>Combo mode</div>
+        <div class="mode" *ngIf="subOnly"><clr-icon shape="check"></clr-icon>Sub only</div>
+      </div>
+      <div class="status">
+        <span>
+          <clr-icon *ngIf="!status" shape="no-wifi"></clr-icon>
+          <clr-icon class="online" *ngIf="status" shape="wifi"></clr-icon>
+          {{status ? 'Online' : 'Offline'}}
+        </span>
+      </div>
+      <div class="interactions">
+          <clr-dropdown>
+            <button type="button" clrDropdownTrigger>
+                <clr-icon shape="ellipsis-vertical" size="24"></clr-icon>
+            </button>
+            <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
+                <label class="dropdown-header">Salon</label>
+                <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="user"></clr-icon>Inviter quelqu'un</button>
+                <button type="button" *ngIf="status" class="with-icon" clrDropdownItem (click)="goOffline()"><clr-icon shape="power"></clr-icon>Aller Hors ligne</button>
+                <button type="button" *ngIf="!status" class="with-icon success" clrDropdownItem (click)="goOnline()"><clr-icon shape="power"></clr-icon>Aller en ligne</button>
+                <label class="dropdown-header">Intégration</label>
+                <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="link"></clr-icon>Lien d'intégration</button>
+                <div class="dropdown-divider"></div>
+                <button type="button" class="with-icon danger" clrDropdownItem><clr-icon shape="logout"></clr-icon>Quitter</button>
+            </clr-dropdown-menu>
+        </clr-dropdown>
+      </div>
+    </div>
+    <nav class="subnav">
+      
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{'active': members}" href="javascript:;" (click)="params=false;members = !members">Membres</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{'active': params}"  href="javascript:;"(click)="members=false;params = !params">Paramètres</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="members-list" [@showHide]="members ? 'in' : 'hidden'">
+      <div class="profile-icon">
+        <clr-tooltip>
+            <img clrTooltipTrigger src="https://www.gravatar.com/avatar/2sdfsdf?d=identicon">
+            <clr-tooltip-content clrPosition="bottom-right" clrSize="sm" *clrIfOpen>
+                <span>Wobow</span>
+            </clr-tooltip-content>
+          </clr-tooltip>
+        </div>
+    </div>
+    <div class="params" [@showHide]="params ? 'in' : 'hidden'">
+        <div class="form-group">
+            <label class="big">Mode du salon</label>
+            <div class="checkbox">
+                <input type="checkbox" id="checkrads_1" [(ngModel)]="slowMode">
+                <label for="checkrads_1">Slow mode</label>
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" id="checkrads_2" [(ngModel)]="comboMode">
+                <label for="checkrads_2">Combo mode</label>
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" id="checkrads_3" [(ngModel)]="queueMode">
+                <label for="checkrads_3">Queue mode</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="big">Twitch</label>
+            <div>
+                <label for="twitch">Clé API Twitch</label>
+                <input type="text" id="twitch" [(ngModel)]="twitchApiKey">
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" id="subOnly" [(ngModel)]="subOnly">
+                <label for="subOnly">Sub Only</label>
+            </div>
+        </div>
+        <div class="form-group" [@showHide]="slowMode ? 'in' : 'hidden'">
+            <label class="big">Options du Slow Mode</label>
+            <div>
+                <label for="interval">Interval entre deux sons</label>
+                <input type="number" id="interval" [(ngModel)]="interval">
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" id="nolimit" [(ngModel)]="nolimit">
+                <label for="nolimit">Pas de limite pour les modos</label>
+            </div>
+        </div>
+        <div class="form-group" [@showHide]="comboMode ? 'in' : 'hidden'">
+            <label class="big">Options du Combo Mode</label>
+            <div>
+                <label for="maxCmd">Nombre de commandes max</label>
+                <input type="number" id="maxCmd" [(ngModel)]="maxCmd">
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" id="nolimit" [(ngModel)]="nolimit">
+                <label for="nolimit">Pas de limite pour les modos</label>
+            </div>
+        </div>
+        <div class="btn-submit">
+            <button class="btn btn-sb">Sauvegarder</button>
+        </div>
+    </div>
+    <div class="lobby-content">
+      <div class="searchbar">
+        <input type="text" placeholder="Rechercher..." [(ngModel)]="filter">
+        <clr-icon shape="search"></clr-icon>
+      </div>
+      <div class="info-bar">
+        <span>{{sounds?.length}} sons disponibles</span>
+        <div class="display-options">
+
+          <clr-dropdown>
+              <button type="button" clrDropdownTrigger>
+                  <clr-icon shape="sort-by"></clr-icon>
+                  Trier par {{sortType || 'nom'}}
+              </button>
+              <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
+                  <button type="button" class="with-icon" clrDropdownItem>Nom</button>
+                  <button type="button" class="with-icon" clrDropdownItem>Popularité</button>
+              </clr-dropdown-menu>
+          </clr-dropdown>
+          <clr-dropdown>
+              <button type="button" clrDropdownTrigger>
+                  <clr-icon shape="grid-view"></clr-icon>
+                  {{size === 'compact' ? 'Compact' : 'Détaillé'}}
+              </button>
+              <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
+                  <button type="button" class="with-icon" (click)="size = 'compact'" clrDropdownItem><clr-icon shape="grid-view"></clr-icon>Compact</button>
+                  <button type="button" class="with-icon" (click)="size = 'details'" clrDropdownItem><clr-icon shape="axis-chart"></clr-icon>Détaillé</button>
+              </clr-dropdown-menu>
+          </clr-dropdown>
+        </div>
+      </div>
+      <div class="sound-list">
+        <div class="inner-sound-list">
+          <div class="sound-elem" *ngFor="let sound of sounds | filterName: filter | limit: 20">
+            <div class="elem-name">
+              <span>{{sound.name}}</span>
+              <button *ngIf="size === 'compact'" type="button" class="btn-icon"><clr-icon shape="play"></clr-icon></button>
+              <clr-dropdown *ngIf="size === 'details'">
+                <button type="button" clrDropdownTrigger>
+                    <clr-icon shape="ellipsis-vertical"></clr-icon>
+                </button>
+                <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
+                    <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="play"></clr-icon>Préécouter</button>
+                    <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="plus"></clr-icon>Ajouter au combo</button>
+                </clr-dropdown-menu>
+            </clr-dropdown>
+          </div>
+          <div class="sound-description" [@showHide]="size === 'compact' ? 'hidden': 'in'">
+            Joué 10 fois
+          </div>
+            <div class="sound-action"  [@showHide]="size === 'compact' ? 'hidden': 'in'">
+              <button class="btn-sound-action with-icon"  (click)="play(sound)"><clr-icon shape="play"></clr-icon> Lire</button>
+              <button class="btn-sound-action with-icon"><clr-icon shape="heart"></clr-icon> Favoris</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
