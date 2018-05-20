@@ -1,16 +1,15 @@
 import { CONF_LOCAL } from '../environments/environment.local';
 import { CONF_DEV } from '../environments/environment.dev';
 import { CONF_PROD } from '../environments/environment.prod';
+import process from 'process';
 
-const ENV = 'local';
+const ENV = process.env.NODE_ENV;
 
 const LOCAL: String = 'local';
 const DEV: String = 'dev';
 const PROD: String = 'prod';
 
 let conf: any;
-
-console.log('Env', ENV);
 
 if (ENV === PROD) {
   conf = CONF_PROD;
