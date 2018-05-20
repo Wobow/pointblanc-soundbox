@@ -28,7 +28,8 @@ export class LobbyComponent implements OnInit {
   maxCmd;
   filter;
   sortType;
-  
+  error;
+  copiedText;
   invitePeople;
   inviteLink;
   baseURL = 'http://localhost:8080/invite/';
