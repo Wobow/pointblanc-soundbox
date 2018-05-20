@@ -48,7 +48,7 @@
                           <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
                       </div>
                       <span class="alert-text">
-                          Une erreur est survenue. Veuillez réessayer.
+                          {{error?.message || 'Une erreur est survenue. Veuillez réessayer.'}}
                       </span>
                   </div>
               </div>
@@ -60,7 +60,7 @@
             <div class="form-group">
               <div class="form-input">
                 <input type="text" name="" placeholder="" [(ngModel)]="inviteLink">
-                <button [ngClass]="{'hidden': !inviteLink?.length}" class="inset-btn btn btn-sb"><clr-icon shape="check"></clr-icon></button>
+                <button [ngClass]="{'hidden': !inviteLink?.length}" (click)="join()" class="inset-btn btn btn-sb"><clr-icon shape="check"></clr-icon></button>
               </div>
               <span class="input-help">Entrez un lien d'invitation</span>
             </div>

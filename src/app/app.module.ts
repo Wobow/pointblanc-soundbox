@@ -31,7 +31,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { TokenInterceptor } from './auth.interceptor';
-
+import {ClipboardModule} from 'ngx-clipboard';
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -54,6 +54,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DirectivesModule,
     NouisliderModule,
     PipesModule,
+    ClipboardModule,
     ClarityModule,
     TranslateModule.forRoot({
       loader: {

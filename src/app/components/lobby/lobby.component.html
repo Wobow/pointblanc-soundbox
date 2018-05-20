@@ -6,7 +6,7 @@
       </div>
       <div class="basic-info">
           <div class="name">{{server?.name || 'Server'}}</div>
-          <div class="members">{{server?.members?.length || '1'}} membre(s)</div>
+          <div class="members">{{server?.users?.length || '1'}} membre(s)</div>
       </div>
       <div class="modes-info">
         <div class="mode" *ngIf="queueMode"><clr-icon shape="check"></clr-icon>Queue mode</div>
@@ -28,7 +28,7 @@
             </button>
             <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
                 <label class="dropdown-header">Salon</label>
-                <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="user"></clr-icon>Inviter quelqu'un</button>
+                <button type="button" class="with-icon" clrDropdownItem (click)="invite()"><clr-icon shape="user"></clr-icon>Inviter quelqu'un</button>
                 <button type="button" *ngIf="status" class="with-icon" clrDropdownItem (click)="goOffline()"><clr-icon shape="power"></clr-icon>Aller Hors ligne</button>
                 <button type="button" *ngIf="!status" class="with-icon success" clrDropdownItem (click)="goOnline()"><clr-icon shape="power"></clr-icon>Aller en ligne</button>
                 <label class="dropdown-header">Intégration</label>
@@ -51,11 +51,11 @@
         </ul>
     </nav>
     <div class="members-list" [@showHide]="members ? 'in' : 'hidden'">
-      <div class="profile-icon">
+      <div class="profile-icon" *ngFor="let m of server?.users">
         <clr-tooltip>
-            <img clrTooltipTrigger src="https://www.gravatar.com/avatar/2sdfsdf?d=identicon">
-            <clr-tooltip-content clrPosition="bottom-right" clrSize="sm" *clrIfOpen>
-                <span>Wobow</span>
+            <img clrTooltipTrigger src="https://www.gravatar.com/avatar/{{m.user?._id}}?d=identicon">
+            <clr-tooltip-content clrPosition="bottom-right" clrSize="xs" *clrIfOpen>
+                <span>{{m.user?.username}}</span>
             </clr-tooltip-content>
           </clr-tooltip>
         </div>
@@ -173,3 +173,32 @@
     </div>
 
 </div>
+
+
+<clr-modal [(clrModalOpen)]="invitePeople">
+  <h3 class="modal-title">Inviter quelqu'un</h3>
+  <div class="modal-body">
+      <div class="alert alert-danger" *ngIf="error">
+          <div class="alert-items">
+              <div class="alert-item static">
+                  <div class="alert-icon-wrapper">
+                      <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                  </div>
+                  <span class="alert-text">
+                      Une erreur est survenue. Veuillez réessayer.
+                  </span>
+              </div>
+          </div>
+      </div>
+    <div class="invite">
+      <img src="assets/team.svg" height="70px">
+      <div class="form-group">
+        <div class="form-input">
+          <input type="text" name="" placeholder="" #inviteInput [value]="baseURL + inviteLink?.code">
+          <button class="inset-btn btn btn-sb" (click)="copiedText = 'Copié !'" [ngxClipboard]="inviteInput" >{{copiedText || 'Copier'}}</button>
+        </div>
+        <span class="input-help">Envoyez ce lien d'invitation à vos amis</span>
+      </div>
+    </div>
+  </div>
+</clr-modal>

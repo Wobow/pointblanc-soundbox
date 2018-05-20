@@ -70,6 +70,9 @@ export class AppComponent implements OnInit {
         this.serverName = '';
         this.createNewServer = false;
         this.router.navigate(['/lobby/' + server._id]);
+        this.lobbyService.loadLobbies().subscribe((lobbies) => {
+          this.lobbies = lobbies;
+        });
       }, (err) => {
         console.error(err);
         this.error = true;
@@ -79,5 +82,19 @@ export class AppComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  join() {
+    this.error = false;
+    this.lobbyService.joinLobby(this.inviteLink).subscribe((lobby: any) => {
+      this.router.navigate(['/lobby/' + lobby._id]);
+      this.createNewServer = false;
+      this.lobbyService.loadLobbies().subscribe((lobbies) => {
+        this.lobbies = lobbies;
+      });
+    }, (err) => {
+      console.error(err);
+      this.error = err.error;
+    });
   }
 }

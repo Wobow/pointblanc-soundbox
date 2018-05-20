@@ -26,4 +26,13 @@ export class LobbyService {
   getLobby(id: string) {
     return this.http.get(AppConfig.api + LOBBY_URI + '/' + id);
   }
+
+  createInvite(lobbyId, invite: {expiresAt: number, code: string}) {
+    return this.http.post(AppConfig.api + LOBBY_URI + '/' + lobbyId + '/invites', {expiresAt: invite.expiresAt, code: invite.code});
+  }
+
+  joinLobby(inviteLink: string) {
+    const code = inviteLink.substring(inviteLink.lastIndexOf('/') + 1);
+    return this.http.post(AppConfig.api + LOBBY_URI + '/join/', {code});
+  }
 }

@@ -29,6 +29,9 @@ export class LobbyComponent implements OnInit {
   filter;
   sortType;
   
+  invitePeople;
+  inviteLink;
+  baseURL = 'http://localhost:8080/invite/';
   constructor(private lobbyService: LobbyService, private route: ActivatedRoute, private soundService: SoundsService) {
     this.soundService.changeStatus$.subscribe((status) => this.status = status);
   }
@@ -59,5 +62,27 @@ export class LobbyComponent implements OnInit {
 
   play(command) {
     this.soundService.playSoundById(command._id);
+  }
+
+  makeid() {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    for (let i = 0; i < 5; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+  }
+
+  invite() {
+    this.invitePeople = true;
+    if (!this.inviteLink) {
+      this.inviteLink = {
+        expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+        code: this.makeid()
+      };
+      this.lobbyService.createInvite(this.server._id, this.inviteLink).subscribe();
+    }
   }
 }
