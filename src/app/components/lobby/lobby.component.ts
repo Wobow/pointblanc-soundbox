@@ -16,7 +16,19 @@ export class LobbyComponent implements OnInit {
   sounds;
   size = 'details';
   status;
-
+  queueMode;
+  slowMode;
+  comboMode;
+  subOnly;
+  members;
+  params;
+  twitchApiKey;
+  interval;
+  nolimit;
+  maxCmd;
+  filter;
+  sortType;
+  
   constructor(private lobbyService: LobbyService, private route: ActivatedRoute, private soundService: SoundsService) {
     this.soundService.changeStatus$.subscribe((status) => this.status = status);
   }
