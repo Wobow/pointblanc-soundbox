@@ -30,10 +30,10 @@ export class SoundsService {
   queueEmpty = true;
   playing$ = new Subject<any[]>();
   playingQueue = [];
+  queueMode;
   commandUpdate$ = new Subject<any>();
 
   constructor(private http: HttpClient, private auth: AuthService, private lobby: LobbyService  ) {
-    console.log('AppConfig', AppConfig);
     this.volume = 1;
     this.changeStatus$.subscribe((status) => {
       if (status) {
@@ -47,7 +47,7 @@ export class SoundsService {
           }
         });
         this.socket.connect();
-      } else {
+      } else if (this.socket) {
         this.socket.disconnect();
       }
     });
@@ -55,7 +55,6 @@ export class SoundsService {
   }
 
   initializeWebSocketConnection(): Subject<MessageEvent> {
-    console.log(this.wsUrl);
     if (this.socket) {
       this.socket.disconnect();
     }
@@ -119,12 +118,19 @@ export class SoundsService {
       audio.volume = this.volume;
       audio.load();
       audio.play();
-      audio.onended = (ev) => {
+      if (!this.queueMode) {
         this.playingQueue = [..._.reverse(this.queue)];
         this.playing$.next(this.playingQueue);
         obs.next();
         obs.complete();
-      };
+      } else {
+        audio.onended = (ev) => {
+          this.playingQueue = [..._.reverse(this.queue)];
+          this.playing$.next(this.playingQueue);
+          obs.next();
+          obs.complete();
+        };
+      }
     });
   }
 
@@ -169,7 +175,6 @@ export class SoundsService {
   }
 
   publish(id, serverId?: string) {
-    console.log(id);
     this.socketInterface.next(<any>{
       userId: this.auth.me._id,
       serverId: serverId,

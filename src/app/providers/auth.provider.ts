@@ -14,7 +14,6 @@ export class AuthService {
   auth$: Subject<boolean>;
 
   constructor(private http: HttpClient) {
-    console.log('lol');
     this.auth$ = new Subject();
   }
 

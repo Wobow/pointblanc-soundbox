@@ -34,7 +34,9 @@
                 <label class="dropdown-header">Intégration</label>
                 <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="link"></clr-icon>Lien d'intégration</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="with-icon danger" clrDropdownItem><clr-icon shape="logout"></clr-icon>Quitter</button>
+                <button type="button" class="with-icon danger" (click)="quitLobby()" clrDropdownItem><clr-icon shape="logout"></clr-icon>Quitter</button>
+                <button type="button" *ngIf="role === 'creator'" class="with-icon danger" (click)="deleteLobby()" clrDropdownItem><clr-icon shape="trash"></clr-icon>Supprimer</button>
+            
             </clr-dropdown-menu>
         </clr-dropdown>
       </div>
@@ -74,6 +76,10 @@
             <div class="checkbox">
                 <input type="checkbox" id="checkrads_3" [(ngModel)]="config?.offline.active">
                 <label for="checkrads_3">Offline mode</label>
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" id="checkrads_4" [(ngModel)]="config?.queue.active">
+                <label for="checkrads_4">Queue mode</label>
             </div>
         </div>
         <div class="form-group">
@@ -155,8 +161,10 @@
                     <clr-icon shape="ellipsis-vertical"></clr-icon>
                 </button>
                 <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
-                    <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="play"></clr-icon>Préécouter</button>
+                    <button type="button" class="with-icon" (click)="preview(sound)" clrDropdownItem><clr-icon shape="play"></clr-icon>Préécouter</button>
                     <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="plus"></clr-icon>Ajouter au combo</button>
+                    <div class="dropdown-divider"></div>
+                    <button type="button" class="with-icon danger" (click)="delete(sound)" clrDropdownItem><clr-icon shape="trash"></clr-icon>Supprimer</button>
                 </clr-dropdown-menu>
             </clr-dropdown>
           </div>

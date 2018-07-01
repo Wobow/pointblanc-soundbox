@@ -5,6 +5,7 @@ import { SoundsService } from '../../providers/sounds.provider';
 import { Animations } from '../../animations';
 import { mergeMap, finalize } from 'rxjs/operators';
 import { AlertService } from '../../providers/alert.service';
+import { AuthService } from '../../providers/auth.provider';
 
 @Component({
   selector: 'app-lobby',
@@ -41,12 +42,15 @@ export class LobbyComponent implements OnInit {
   baseURL = 'http://localhost:8080/invite/';
   config;
   updateConfig;
+  role;
 
   constructor(
     private lobbyService: LobbyService,
     private route: ActivatedRoute,
     private soundService: SoundsService,
     private alertService: AlertService,
+    private router: Router,
+    private auth: AuthService,
   ) {
     this.soundService.changeStatus$.subscribe((status) => this.status = status);
     this.soundService.commandUpdate$.subscribe((command) => {
@@ -65,7 +69,10 @@ export class LobbyComponent implements OnInit {
         mergeMap((server) => {
           this.server = server;
           this.config = this.lobbyService.extractConfig(this.server);
-          this.soundService.online = true;
+          this.soundService.queueMode = this.config.queue.active;
+          this.soundService.online = this.config.offline.active;
+          this.role = this.server.users.find((u) => u.user._id === this.auth.me._id).role;
+          console.log('role :', this.role);
           return this.soundService.loadSoundLibrary(this.server._id);
         })
       )
@@ -142,7 +149,7 @@ export class LobbyComponent implements OnInit {
   saveConfig() {
     if (this.updateConfig) { return; }
     this.updateConfig = true;
-    console.log(this.config);
+    this.soundService.queueMode = this.config.queue.active;
     this.lobbyService.setConfig(this.config, this.server._id)
       .pipe(
         finalize(() => this.updateConfig = false)
@@ -151,5 +158,33 @@ export class LobbyComponent implements OnInit {
         (res) => this.alertService.toast('Configuration mise à jour avec succès', 'success'),
         (err) => this.alertService.toast('Impossible de mettre à jour la config', 'error')
       );
+  }
+
+  preview(sound) {
+    this.soundService.play(sound);
+  }
+
+  delete(sound) {
+    this.lobbyService.deleteSound(this.server._id, sound)
+      .subscribe(
+        () => this.loadCommands(),
+        (err) => this.alertService.toast('Impossible de supprimer la commande', 'error'),
+      );
+  }
+
+  quitLobby() {
+    this.lobbyService.quitLobby(this.server._id, this.auth.me._id)
+    .subscribe(
+      () => this.router.navigate(['/home']),
+      (err) => this.alertService.toast(err.message, 'error'),
+    );
+  }
+
+  deleteLobby() {
+    this.lobbyService.deleteLobby(this.server._id)
+    .subscribe(
+      () => this.router.navigate(['/home']),
+      (err) => this.alertService.toast(err.message, 'error'),
+    );
   }
 }

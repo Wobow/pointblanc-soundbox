@@ -43,7 +43,6 @@ export class LobbyService {
   }
 
   extractConfig(server: any) {
-    console.log(server.rules);
     if (!server.rules || !server.rules.length) { return LobbyService.defaultConfig(); }
     const out = {};
     server.rules.forEach((c) => {
@@ -57,14 +56,12 @@ export class LobbyService {
         out[key] = LobbyService.defaultConfig()[key];
       }
     });
-    console.log(out);
     return out;
   }
 
   loadLobbies() {
     return this.authService.getMe()
       .flatMap((me: any) => {
-        console.log(me);
         return Observable.of(me.lobbies);
       });
   }
@@ -84,7 +81,18 @@ export class LobbyService {
 
   setConfig(config: any, serverId: string) {
     const toUpload =  Object.keys(config).map((r: any) => ({name: config[r].name, options: config[r].options, active: config[r].active}));
-    console.log(toUpload);
     return this.http.put(AppConfig.api + LOBBY_URI + '/' + serverId + '/rules', { rules: toUpload });
+  }
+
+  deleteSound(serverId: string, sound: any) {
+    return this.http.delete(AppConfig.api + LOBBY_URI + '/' + serverId + '/commands/' + sound._id);
+  }
+
+  quitLobby(serverId: string, userId: string) {
+    return this.http.delete(AppConfig.api + LOBBY_URI + '/' + serverId + '/users/' + userId);
+  }
+
+  deleteLobby(serverId: string) {
+    return this.http.delete(AppConfig.api + LOBBY_URI + '/' + serverId);
   }
 }

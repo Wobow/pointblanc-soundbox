@@ -62,7 +62,6 @@ export class AppComponent implements OnInit {
 
     });
     this.soundsService.playing$.subscribe((queue) => {
-      console.log(queue);
       this.queue = queue;
     });
   }
