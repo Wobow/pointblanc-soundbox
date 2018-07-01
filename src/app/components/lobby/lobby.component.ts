@@ -3,7 +3,7 @@ import { LobbyService } from '../../providers/lobbies.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SoundsService } from '../../providers/sounds.provider';
 import { Animations } from '../../animations';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, finalize } from 'rxjs/operators';
 import { AlertService } from '../../providers/alert.service';
 
 @Component({
@@ -39,6 +39,9 @@ export class LobbyComponent implements OnInit {
   addSoundModal;
   loading;
   baseURL = 'http://localhost:8080/invite/';
+  config;
+  updateConfig;
+
   constructor(
     private lobbyService: LobbyService,
     private route: ActivatedRoute,
@@ -46,14 +49,23 @@ export class LobbyComponent implements OnInit {
     private alertService: AlertService,
   ) {
     this.soundService.changeStatus$.subscribe((status) => this.status = status);
+    this.soundService.commandUpdate$.subscribe((command) => {
+      const cmd = this.sounds.find((c) => c._id === command._id);
+      if (cmd) {
+        cmd.played = command.played;
+      }
+    });
   }
 
   ngOnInit() {
+    this.config = LobbyService.defaultConfig();
     this.route.params
       .pipe(
         mergeMap((params) => this.lobbyService.getLobby(params.id)),
         mergeMap((server) => {
           this.server = server;
+          this.config = this.lobbyService.extractConfig(this.server);
+          this.soundService.online = true;
           return this.soundService.loadSoundLibrary(this.server._id);
         })
       )
@@ -73,7 +85,7 @@ export class LobbyComponent implements OnInit {
   }
 
   play(command) {
-    this.soundService.playSoundById(command._id);
+    this.soundService.playSoundById(command._id, this.server._id);
   }
 
   makeid() {
@@ -111,13 +123,33 @@ export class LobbyComponent implements OnInit {
     if (this.loading) { return; }
     this.loading = true;
     this.error = false;
-    this.soundService.sendSound(this.commandName, this.file, this.server._id).subscribe(
+    this.soundService.sendSound(this.commandName, this.file, this.server._id)
+    .pipe(
+      finalize(() => this.loading = false)
+    )
+    .subscribe(
       (res) => {
         this.addSoundModal = false;
         this.alertService.toast('Son ajouté avec succès !', 'success');
+        this.commandName = undefined;
+        this.file = undefined;
         this.loadCommands();
       },
       (err) => this.error = true
     );
+  }
+
+  saveConfig() {
+    if (this.updateConfig) { return; }
+    this.updateConfig = true;
+    console.log(this.config);
+    this.lobbyService.setConfig(this.config, this.server._id)
+      .pipe(
+        finalize(() => this.updateConfig = false)
+      )
+      .subscribe(
+        (res) => this.alertService.toast('Configuration mise à jour avec succès', 'success'),
+        (err) => this.alertService.toast('Impossible de mettre à jour la config', 'error')
+      );
   }
 }

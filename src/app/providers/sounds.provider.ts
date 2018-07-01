@@ -6,6 +6,8 @@ import * as io from 'socket.io-client';
 import { AppConfig } from '../app.config';
 import { mergeMap, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { AuthService } from './auth.provider';
+import { LobbyService } from './lobbies.service';
 export const COMMAND_URL = AppConfig.api + '/public/commands/';
 
 @Injectable()
@@ -22,14 +24,15 @@ export class SoundsService {
   }
   changeStatus$ = new Subject<boolean>();
   private _online: boolean;
-  private wsUrl = 'ws://' + AppConfig.api;
+  private wsUrl = 'ws://' + AppConfig.api.split(/https?:\/\//).join('');
   private socketInterface: Subject<MessageEvent>;
   private socket;
   queueEmpty = true;
   playing$ = new Subject<any[]>();
   playingQueue = [];
+  commandUpdate$ = new Subject<any>();
 
-  constructor(private http: HttpClient  ) {
+  constructor(private http: HttpClient, private auth: AuthService, private lobby: LobbyService  ) {
     console.log('AppConfig', AppConfig);
     this.volume = 1;
     this.changeStatus$.subscribe((status) => {
@@ -39,6 +42,7 @@ export class SoundsService {
           if (message.error) {
             this.online = false;
           } else if (message.broadcast) {
+            this.commandUpdate$.next(message.content);
             this.play(message.content);
           }
         });
@@ -51,6 +55,10 @@ export class SoundsService {
   }
 
   initializeWebSocketConnection(): Subject<MessageEvent> {
+    console.log(this.wsUrl);
+    if (this.socket) {
+      this.socket.disconnect();
+    }
     this.socket = io(this.wsUrl, {
       autoConnect: false,
     });
@@ -104,7 +112,6 @@ export class SoundsService {
 
   private playCommand(command) {
     return new Observable((obs) => {
-      console.log('playing :', command);
       this.playingQueue = [..._.reverse(this.queue), command];
       this.playing$.next(this.playingQueue);
       const audio = new Audio();
@@ -161,24 +168,29 @@ export class SoundsService {
     }
   }
 
-  publish(id) {
-    this.socketInterface.next(id);
+  publish(id, serverId?: string) {
+    console.log(id);
+    this.socketInterface.next(<any>{
+      userId: this.auth.me._id,
+      serverId: serverId,
+      commandId: id,
+    });
   }
 
-  playSoundByName(name: string) {
+  playSoundByName(name: string, serverId?: string) {
     const sound = this.getSoundByName(name);
     if (!this.online) {
       this.play(sound);
     } else {
-      this.publish(sound._id);
+      this.publish(sound._id, serverId);
     }
   }
-  playSoundById(id: string) {
+  playSoundById(id: string, serverId?: string) {
     const sound = this.getSoundById(id);
     if (!this.online) {
       this.play(sound);
     } else {
-      this.publish(sound._id);
+      this.publish(sound._id, serverId);
     }
   }
 

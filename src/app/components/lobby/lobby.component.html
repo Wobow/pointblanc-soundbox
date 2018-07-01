@@ -9,12 +9,12 @@
           <div class="members">{{server?.users?.length || '1'}} membre(s)</div>
       </div>
       <div class="modes-info">
-        <div class="mode" *ngIf="queueMode"><clr-icon shape="check"></clr-icon>Queue mode</div>
-        <div class="mode" *ngIf="slowMode"><clr-icon shape="check"></clr-icon>Slow mode</div>
-        <div class="mode" *ngIf="comboMode"><clr-icon shape="check"></clr-icon>Combo mode</div>
-        <div class="mode" *ngIf="subOnly"><clr-icon shape="check"></clr-icon>Sub only</div>
+        <div class="mode" *ngIf="config?.offline?.active"><clr-icon shape="close"></clr-icon>Offline</div>
+        <div class="mode" *ngIf="config?.slow?.active" ><clr-icon shape="check"></clr-icon>Slow mode</div>
+        <div class="mode" *ngIf="config?.combo?.active"><clr-icon shape="check"></clr-icon>Combo mode</div>
+        <div class="mode" *ngIf="config?.subOnly?.active"><clr-icon shape="check"></clr-icon>Sub only</div>
       </div>
-      <div class="status">
+      <div class="status" (click)="goOnline()">
         <span>
           <clr-icon *ngIf="!status" shape="no-wifi"></clr-icon>
           <clr-icon class="online" *ngIf="status" shape="wifi"></clr-icon>
@@ -64,16 +64,16 @@
         <div class="form-group">
             <label class="big">Mode du salon</label>
             <div class="checkbox">
-                <input type="checkbox" id="checkrads_1" [(ngModel)]="slowMode">
+                <input type="checkbox" id="checkrads_1" [(ngModel)]="config?.slow.active">
                 <label for="checkrads_1">Slow mode</label>
             </div>
             <div class="checkbox">
-                <input type="checkbox" id="checkrads_2" [(ngModel)]="comboMode">
+                <input type="checkbox" id="checkrads_2" [(ngModel)]="config?.combo.active">
                 <label for="checkrads_2">Combo mode</label>
             </div>
             <div class="checkbox">
-                <input type="checkbox" id="checkrads_3" [(ngModel)]="queueMode">
-                <label for="checkrads_3">Queue mode</label>
+                <input type="checkbox" id="checkrads_3" [(ngModel)]="config?.offline.active">
+                <label for="checkrads_3">Offline mode</label>
             </div>
         </div>
         <div class="form-group">
@@ -83,34 +83,34 @@
                 <input type="text" id="twitch" [(ngModel)]="twitchApiKey">
             </div>
             <div class="checkbox">
-                <input type="checkbox" id="subOnly" [(ngModel)]="subOnly">
+                <input type="checkbox" id="subOnly" [(ngModel)]="config?.subOnly.active">
                 <label for="subOnly">Sub Only</label>
             </div>
         </div>
-        <div class="form-group" [@showHide]="slowMode ? 'in' : 'hidden'">
+        <div class="form-group" [@showHide]="config?.slow.active ? 'in' : 'hidden'">
             <label class="big">Options du Slow Mode</label>
             <div>
-                <label for="interval">Interval entre deux sons</label>
-                <input type="number" id="interval" [(ngModel)]="interval">
+                <label for="interval">Interval entre deux sons (en secondes) : </label>
+                <input type="number" id="interval" [(ngModel)]="config?.slow.options.interval">
             </div>
             <div class="checkbox">
-                <input type="checkbox" id="nolimit" [(ngModel)]="nolimit">
+                <input type="checkbox" id="nolimit" [(ngModel)]="config?.slow.options.noLimitForModerators">
                 <label for="nolimit">Pas de limite pour les modos</label>
             </div>
         </div>
-        <div class="form-group" [@showHide]="comboMode ? 'in' : 'hidden'">
+        <div class="form-group" [@showHide]="config?.combo.active ? 'in' : 'hidden'">
             <label class="big">Options du Combo Mode</label>
             <div>
                 <label for="maxCmd">Nombre de commandes max</label>
-                <input type="number" id="maxCmd" [(ngModel)]="maxCmd">
+                <input type="number" id="maxCmd" [(ngModel)]="config?.combo.options.maxCmdPerCombo">
             </div>
             <div class="checkbox">
-                <input type="checkbox" id="nolimit" [(ngModel)]="nolimit">
+                <input type="checkbox" id="nolimit" [(ngModel)]="config?.combo.options.noLimitForModerators">
                 <label for="nolimit">Pas de limite pour les modos</label>
             </div>
         </div>
         <div class="btn-submit">
-            <button class="btn btn-sb">Sauvegarder</button>
+            <button class="btn btn-sb" (click)="saveConfig()">Sauvegarder</button>
         </div>
     </div>
     <div class="lobby-content">
@@ -161,7 +161,7 @@
             </clr-dropdown>
           </div>
           <div class="sound-description" [@showHide]="size === 'compact' ? 'hidden': 'in'">
-            Joué 10 fois
+            Joué {{sound.played || 0}} fois
           </div>
             <div class="sound-action"  [@showHide]="size === 'compact' ? 'hidden': 'in'">
               <button class="btn-sound-action with-icon"  (click)="play(sound)"><clr-icon shape="play"></clr-icon> Lire</button>
