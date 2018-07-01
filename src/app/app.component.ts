@@ -7,6 +7,7 @@ import { LobbyService } from './providers/lobbies.service';
 import { Animations } from './animations';
 import { Router } from '@angular/router';
 import { AuthService } from './providers/auth.provider';
+import { AlertService } from './providers/alert.service';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
   lobbies;
   error;
   isAuth;
+  queue;
 
   constructor(
     public electronService: ElectronService,
@@ -29,6 +31,7 @@ export class AppComponent implements OnInit {
     private soundsService: SoundsService,
     private authService: AuthService,
     private router: Router,
+    private alertService: AlertService,
     private lobbyService: LobbyService) {
 
     translate.setDefaultLang('en');
@@ -55,6 +58,19 @@ export class AppComponent implements OnInit {
         this.lobbies = [];
       }
     });
+    this.alertService.alert$.subscribe((content) => {
+
+    });
+    this.soundsService.playing$.subscribe((queue) => {
+      console.log(queue);
+      this.queue = queue;
+    });
+  }
+
+  remove(index) {
+    if (index >= this.soundsService.queue.length) { return; }
+
+    this.soundsService.removeIndex(this.soundsService.queue.length - index - 1, index);
   }
 
   createServer() {

@@ -101,3 +101,64 @@
   margin-right: 1em;
   text-decoration: none;
 }
+
+.playlist-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 1rem;
+  background-color: #17242b;
+  border-top: 1px solid #44555E;
+  transition: all .2s ease;
+  overflow: hidden;
+  .elem {
+    padding: 1em 1em 1em 3em;
+    background-color: #1B2D38;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    transition: all .2s ease;
+    &:not(:last-of-type) {
+      &:after, &:before {
+        left: 100%;
+        top: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
+        transition: all .2s ease;
+      }
+      
+      &:after {
+        border-color: rgba(136, 183, 213, 0);
+        border-left-color: #1B2D38;
+        border-width: 2em;
+        margin-top: -2em;
+      }
+      &:before {
+        border-color: rgba(194, 225, 245, 0);
+        border-left-color: #44555E;
+        border-width: calc(2em + 1px);
+        margin-top: calc(-2em - 1px);
+      }
+
+    }
+    &:last-of-type {
+      background-color: #061219;
+      padding-right: 3em;
+    }
+    &:hover {
+      background-color: #0E1E27;
+      &:after {
+        border-left-color: #0E1E27;
+      }
+      &:before {
+        border-left-color: #0E1E27;
+      }
+    }
+  }
+}

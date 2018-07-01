@@ -36,6 +36,18 @@
     </header>
     <div class="content-container">
       <router-outlet></router-outlet>
+      <div class="playlist-overlay" align="right">
+        <div class="elem" *ngFor="let e of queue; let idx = index" (click)="remove(idx)">
+          <clr-tooltip>
+              <div clrTooltipTrigger >
+                <span>{{e.name}}</span>
+              </div>
+              <clr-tooltip-content clrPosition="top-left" clrSize="md"  *clrIfOpen>
+                  <span>Cliquez pour supprimer</span>
+              </clr-tooltip-content>
+          </clr-tooltip>
+        </div>
+      </div>
     </div>
   </div>
   <clr-modal [(clrModalOpen)]="createNewServer">

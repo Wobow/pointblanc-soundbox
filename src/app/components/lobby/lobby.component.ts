@@ -3,6 +3,8 @@ import { LobbyService } from '../../providers/lobbies.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SoundsService } from '../../providers/sounds.provider';
 import { Animations } from '../../animations';
+import { mergeMap } from 'rxjs/operators';
+import { AlertService } from '../../providers/alert.service';
 
 @Component({
   selector: 'app-lobby',
@@ -31,21 +33,30 @@ export class LobbyComponent implements OnInit {
   error;
   copiedText;
   invitePeople;
+  commandName;
   inviteLink;
+  file;
+  addSoundModal;
+  loading;
   baseURL = 'http://localhost:8080/invite/';
-  constructor(private lobbyService: LobbyService, private route: ActivatedRoute, private soundService: SoundsService) {
+  constructor(
+    private lobbyService: LobbyService,
+    private route: ActivatedRoute,
+    private soundService: SoundsService,
+    private alertService: AlertService,
+  ) {
     this.soundService.changeStatus$.subscribe((status) => this.status = status);
   }
 
   ngOnInit() {
     this.route.params
-      .flatMap((params) => {
-        return this.lobbyService.getLobby(params.id);
-      })
-      .flatMap((server) => {
-        this.server = server;
-        return this.soundService.loadSoundLibrary();
-      })
+      .pipe(
+        mergeMap((params) => this.lobbyService.getLobby(params.id)),
+        mergeMap((server) => {
+          this.server = server;
+          return this.soundService.loadSoundLibrary(this.server._id);
+        })
+      )
       .subscribe((sounds) => {
         this.sounds = sounds;
       }, (err) => {
@@ -85,5 +96,28 @@ export class LobbyComponent implements OnInit {
       };
       this.lobbyService.createInvite(this.server._id, this.inviteLink).subscribe();
     }
+  }
+
+  fileAdded(event) {
+    this.file = event.target.files[0];
+  }
+
+  loadCommands() {
+    this.soundService.loadSoundLibrary(this.server._id)
+    .subscribe((sounds) => this.sounds = sounds);
+  }
+
+  sendSound() {
+    if (this.loading) { return; }
+    this.loading = true;
+    this.error = false;
+    this.soundService.sendSound(this.commandName, this.file, this.server._id).subscribe(
+      (res) => {
+        this.addSoundModal = false;
+        this.alertService.toast('Son ajouté avec succès !', 'success');
+        this.loadCommands();
+      },
+      (err) => this.error = true
+    );
   }
 }

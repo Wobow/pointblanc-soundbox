@@ -1,14 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import * as io from 'socket.io-client';
+import { AppConfig } from '../app.config';
+import { mergeMap, tap } from 'rxjs/operators';
+import * as _ from 'lodash';
+export const COMMAND_URL = AppConfig.api + '/public/commands/';
 
 @Injectable()
 export class SoundsService {
 
   library;
   volume;
+  queue$ = new Subject();
+  queue = [];
   get online() { return this._online; }
   set online(val: boolean) {
     this._online = val;
@@ -16,11 +22,15 @@ export class SoundsService {
   }
   changeStatus$ = new Subject<boolean>();
   private _online: boolean;
-  private wsUrl = 'ws://api.soundbox.alan-balbo.com/';
+  private wsUrl = 'ws://' + AppConfig.api;
   private socketInterface: Subject<MessageEvent>;
   private socket;
+  queueEmpty = true;
+  playing$ = new Subject<any[]>();
+  playingQueue = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient  ) {
+    console.log('AppConfig', AppConfig);
     this.volume = 1;
     this.changeStatus$.subscribe((status) => {
       if (status) {
@@ -37,6 +47,7 @@ export class SoundsService {
         this.socket.disconnect();
       }
     });
+    this.listenForQueue();
   }
 
   initializeWebSocketConnection(): Subject<MessageEvent> {
@@ -78,12 +89,50 @@ export class SoundsService {
     return Subject.create(observer, observable);
   }
 
+  listenForQueue() {
+    this.queue$.pipe(
+      tap(() => this.queueEmpty = false),
+      mergeMap(() => this.playCommand(this.queue.shift())),
+    ).subscribe(() => {
+      if (this.queue.length) {
+        this.queue$.next();
+      } else {
+        this.queueEmpty = true;
+      }
+    });
+  }
+
+  private playCommand(command) {
+    return new Observable((obs) => {
+      console.log('playing :', command);
+      this.playingQueue = [..._.reverse(this.queue), command];
+      this.playing$.next(this.playingQueue);
+      const audio = new Audio();
+      audio.src = COMMAND_URL + command.url;
+      audio.volume = this.volume;
+      audio.load();
+      audio.play();
+      audio.onended = (ev) => {
+        this.playingQueue = [..._.reverse(this.queue)];
+        this.playing$.next(this.playingQueue);
+        obs.next();
+        obs.complete();
+      };
+    });
+  }
+
+  removeIndex(idx, playingIdx) {
+    _.pullAt(this.queue, idx);
+    _.pullAt(this.playingQueue, playingIdx);
+    this.playing$.next(this.playingQueue);
+  }
+
   closeWebSocketConnection() {
 
   }
 
-  loadSoundLibrary() {
-    return this.http.get('http://api.soundbox.alan-balbo.com/api/commands')
+  loadSoundLibrary(lobbyId) {
+    return this.http.get(AppConfig.api + '/api/lobbies/' + lobbyId  + '/commands')
       .first()
       .do((result) => this.library = result);
   }
@@ -105,11 +154,10 @@ export class SoundsService {
 
   play(command) {
     if (command && command.url) {
-      const audio = new Audio();
-      audio.src = command.url;
-      audio.volume = this.volume;
-      audio.load();
-      audio.play();
+      this.queue.push(command);
+      if (this.queueEmpty) { this.queue$.next(); }
+      this.playingQueue = [command, ...this.playingQueue];
+      this.playing$.next(this.playingQueue);
     }
   }
 
@@ -132,5 +180,13 @@ export class SoundsService {
     } else {
       this.publish(sound._id);
     }
+  }
+
+  sendSound(name, file, lobbyId) {
+    const formData = new FormData();
+    formData.set('file', file);
+    formData.set('name', name);
+    formData.set('lobby', lobbyId);
+    return this.http.post(AppConfig.api + '/api/commands', formData);
   }
 }
