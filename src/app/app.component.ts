@@ -150,10 +150,12 @@ export class AppComponent implements OnInit {
   }
 
   updateProfile() {
+    console.log('lol');
     const updatePayload: FormData = new FormData();
     if (this.profileName) { updatePayload.set('username' , this.profileName); }
     if (this.profilePic)  { updatePayload.set('image' , this.profilePic); }
     if (this.newPassword)  { updatePayload.set('password' , this.newPassword); }
+    console.log('lol');
     this.authService.updateProfile(this.profile._id, updatePayload)
       .subscribe((res) => {this.profile = res; this.profileModal = false; });
   }
