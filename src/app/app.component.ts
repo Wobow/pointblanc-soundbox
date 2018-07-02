@@ -8,12 +8,13 @@ import { Animations } from './animations';
 import { Router } from '@angular/router';
 import { AuthService } from './providers/auth.provider';
 import { AlertService } from './providers/alert.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [Animations.showHideHorizontal, Animations.showHide],
+  animations: [Animations.showHideHorizontal, Animations.showHide, Animations.accordionShowHide],
 })
 export class AppComponent implements OnInit {
   inviteLink;
@@ -24,6 +25,13 @@ export class AppComponent implements OnInit {
   error;
   isAuth;
   queue;
+  profile;
+  profileName;
+  profilePic;
+  profileModal;
+  newPassword;
+  confirmDeletionModale;
+  loading;
 
   constructor(
     public electronService: ElectronService,
@@ -51,6 +59,10 @@ export class AppComponent implements OnInit {
     this.authService.auth$.startWith(this.isAuth).subscribe((auth) => {
       setTimeout(() => this.isAuth = auth, 200);
       if (auth) {
+        this.authService.getMe().subscribe((me: any) => {
+          this.profile = me;
+          this.profileName = me.username;
+        });
         this.lobbyService.loadLobbies().subscribe((lobbies) => {
           this.lobbies = lobbies;
         });
@@ -83,6 +95,7 @@ export class AppComponent implements OnInit {
       })
       .subscribe((server: any) => {
         this.serverName = '';
+        this.modalLoading = false;
         this.createNewServer = false;
         this.router.navigate(['/lobby/' + server._id]);
         this.lobbyService.loadLobbies().subscribe((lobbies) => {
@@ -90,6 +103,7 @@ export class AppComponent implements OnInit {
         });
       }, (err) => {
         console.error(err);
+        this.modalLoading = false;
         this.error = true;
       });
   }
@@ -111,5 +125,37 @@ export class AppComponent implements OnInit {
       console.error(err);
       this.error = err.error;
     });
+  }
+
+  setProfilePic(event) {
+    this.profilePic = event.target.files[0];
+  }
+
+  updateProfile() {
+    const updatePayload: FormData = new FormData();
+    if (this.profileName) { updatePayload.set('username' , this.profileName); }
+    if (this.profilePic)  { updatePayload.set('image' , this.profilePic); }
+    if (this.newPassword)  { updatePayload.set('password' , this.newPassword); }
+    this.authService.updateProfile(this.profile._id, updatePayload)
+      .subscribe((res) => {this.profile = res; this.profileModal = false; });
+  }
+
+  deleteProfile() {
+    if (this.loading) { return; }
+    this.loading = true;
+    this.authService
+      .deleteProfile()
+      .pipe(
+        finalize(() => this.loading = false)
+      )
+      .subscribe(
+        () => {
+          this.profileModal = false;
+          this.confirmDeletionModale = false;
+          this.logout();
+          this.alertService.toast('Profil supprimé :(', 'success');
+        },
+        (err) => this.alertService.toast('Impossible de supprimer votre profile !', 'error')
+      );
   }
 }

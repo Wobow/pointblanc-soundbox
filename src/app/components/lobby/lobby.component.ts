@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { LobbyService } from '../../providers/lobbies.service';
+import { LobbyService, LOBBY_IMAGES } from '../../providers/lobbies.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SoundsService } from '../../providers/sounds.provider';
 import { Animations } from '../../animations';
 import { mergeMap, finalize } from 'rxjs/operators';
 import { AlertService } from '../../providers/alert.service';
 import { AuthService } from '../../providers/auth.provider';
+import { Observable } from 'rxjs/Observable';
+import { AppConfig } from '../../app.config';
 
 @Component({
   selector: 'app-lobby',
@@ -43,7 +45,10 @@ export class LobbyComponent implements OnInit {
   config;
   updateConfig;
   role;
-
+  thumbnail;
+  more;
+  serverimg = '/assets/friendship.svg';
+  PROFILE_URI_IMAGE = AppConfig.api + '/public/images/';
   constructor(
     private lobbyService: LobbyService,
     private route: ActivatedRoute,
@@ -62,6 +67,10 @@ export class LobbyComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadLobby();
+  }
+
+  loadLobby() {
     this.config = LobbyService.defaultConfig();
     this.route.params
       .pipe(
@@ -70,7 +79,8 @@ export class LobbyComponent implements OnInit {
           this.server = server;
           this.config = this.lobbyService.extractConfig(this.server);
           this.soundService.queueMode = this.config.queue.active;
-          this.soundService.online = this.config.offline.active;
+          this.soundService.online = !this.config.offline.active;
+          this.serverimg = LOBBY_IMAGES + this.server.thumbnail;
           this.role = this.server.users.find((u) => u.user._id === this.auth.me._id).role;
           console.log('role :', this.role);
           return this.soundService.loadSoundLibrary(this.server._id);
@@ -155,7 +165,10 @@ export class LobbyComponent implements OnInit {
         finalize(() => this.updateConfig = false)
       )
       .subscribe(
-        (res) => this.alertService.toast('Configuration mise à jour avec succès', 'success'),
+        (res) => {
+          this.more = undefined;
+          this.alertService.toast('Configuration mise à jour avec succès', 'success')
+        },
         (err) => this.alertService.toast('Impossible de mettre à jour la config', 'error')
       );
   }
@@ -186,5 +199,29 @@ export class LobbyComponent implements OnInit {
       () => this.router.navigate(['/home']),
       (err) => this.alertService.toast(err.message, 'error'),
     );
+  }
+
+  setThumbnail(event) {
+    this.thumbnail = event.target.files[0];
+  }
+
+  savePerso() {
+    console.log(this.server.name, this.thumbnail);
+    if (this.loading) { return; }
+    this.loading = true;
+    this.lobbyService
+      .updateServer(this.server._id, {name: this.server.name, file: this.thumbnail})
+      .pipe(
+        finalize(() => this.loading = false)
+      )
+      .subscribe(
+        () => {
+          this.loadLobby();
+          this.thumbnail = undefined;
+          this.more = undefined;
+          this.alertService.toast('Serveur mis à jour avec succès', 'success')
+        },
+        (err) => this.alertService.toast('Impossible de mettre à jour le serveur', 'error')
+      );
   }
 }

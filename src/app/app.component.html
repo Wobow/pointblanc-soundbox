@@ -26,7 +26,7 @@
                 </button>
                 <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
                     <label class="dropdown-header">Compte</label>
-                    <button type="button" clrDropdownItem>Mon profil</button>
+                    <button type="button" clrDropdownItem (click)="profileModal = true">Mon profil</button>
                     <button type="button" clrDropdownItem>Paramètres</button>
                     <div class="dropdown-divider"></div>
                     <button type="button" clrDropdownItem [routerLink]="['/login']" (click)="logout()">Déconnexion</button>
@@ -97,3 +97,81 @@
         </div>
       </div>
   </clr-modal>
+
+
+  <clr-modal [(clrModalOpen)]="profileModal">
+    <h3 class="modal-title">Votre profil</h3>
+    <div class="modal-body">
+        <div class="alert alert-danger" *ngIf="error">
+            <div class="alert-items">
+                <div class="alert-item static">
+                    <div class="alert-icon-wrapper">
+                        <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                    </div>
+                    <span class="alert-text">
+                        {{error?.message || 'Une erreur est survenue. Veuillez réessayer.'}}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="profile-section">
+          <div class="form-group">
+            <div class="form-input">
+              <label>Pseudo</label>
+              <input type="text" name="" placeholder="Votre pseudo" [(ngModel)]="profileName">
+             </div>
+            <span class="input-help">Il s'agit de votre nom public</span>
+          </div>
+          <hr class="profile-divider">
+          <div class="form-group">
+            <div class="form-input">
+                <label>Nouveau mot de passe</label>
+              <input type="password" name="" placeholder="Nouveau mot de passe" [(ngModel)]="newPassword">
+             </div>
+            <span class="input-help">Laissez vide si vous ne voulez pas changer votre mot de passe</span>
+          </div>
+          <div class="form-group" *ngIf="newPassword?.length">
+            <div class="form-input">
+                <label>Confirmez votre nouveau mot de passe</label>
+              <input type="password" name="" placeholder="Confirmez" [(ngModel)]="confirmPassword">
+             </div>
+             <span *ngIf="newPassword !== confirmPassword" class="input-help error">Les mots de passe de correspondent pas</span>
+          </div>
+          <hr class="profile-divider">
+          <div class="form-group">
+            <div class="form-input">
+                <label>Photo de profil</label>
+                <input type="file" accept="image/*" (change)="setProfilePic($event)">
+             </div>
+            <span class="input-help">Choisissez une nouvelle photo de profil</span>
+          </div>
+          <hr class="profile-divider">
+          <button class="btn btn-danger-outline" (click)="confirmDeletionModale = true">Supprimer mon compte</button> 
+          <div class="actions">
+            <button class="btn btn-sb" (click)="updateProfile()" [disabled]="newPassword && newPassword !== confirmPassword">Sauvegarder</button>
+            <button class="btn " (click)="profileModal = false">Annuler</button>
+          </div>
+        </div>
+    </div>
+</clr-modal>
+<clr-modal [(clrModalOpen)]="confirmDeletionModale">
+  <h3 class="modal-title">Êtes-vous sûr ?</h3>
+    <div class="modal-body">
+        <div class="alert alert-danger">
+            <div class="alert-items">
+                <div class="alert-item static">
+                    <div class="alert-icon-wrapper">
+                        <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+                    </div>
+                    <span class="alert-text">
+                        Cette opération est irréversible ! Voulez-vous vraiment supprimer votre compte ?
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-danger" style="color:#FFF" [disabled]="loading" (click)="deleteProfile()">Supprimer mon compte</button>
+          <button class="btn btn-sb" *ngIf="!loading" (click)="confirmDeletionModale = false">Annuler</button>
+        </div>
+    </div>
+</clr-modal>

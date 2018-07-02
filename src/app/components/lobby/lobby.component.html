@@ -2,7 +2,9 @@
 <div class="page-container">
     <div class="server-info-ctn">
       <div class="thumbnail">
-        <div class="server-icon">{{server?.name }}</div>
+        <div class="server-icon">
+          <img [src]="serverimg" (error)="serverimg = '/assets/friendship.svg'">
+        </div>
       </div>
       <div class="basic-info">
           <div class="name">{{server?.name || 'Server'}}</div>
@@ -45,24 +47,40 @@
       
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link" [ngClass]="{'active': members}" href="javascript:;" (click)="params=false;members = !members">Membres</a>
+                <a class="nav-link" [ngClass]="{'active': more === 'members'}" href="javascript:;" (click)="more = (more === 'members' ? false : 'members')">Membres</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" [ngClass]="{'active': params}"  href="javascript:;"(click)="members=false;params = !params">Paramètres</a>
+            <li class="nav-item" *ngIf="role === 'creator'">
+                <a class="nav-link" [ngClass]="{'active': more === 'params'}"  href="javascript:;"(click)="more = (more === 'params' ? false : 'params')">Paramètres</a>
+            </li>
+            <li class="nav-item" *ngIf="role === 'creator'">
+                <a class="nav-link" [ngClass]="{'active': more === 'server'}"  href="javascript:;"(click)="more = (more === 'server' ? false : 'server')">Serveur</a>
             </li>
         </ul>
     </nav>
-    <div class="members-list" [@showHide]="members ? 'in' : 'hidden'">
+    <div class="members-list" [@showHide]="more === 'server' ? 'in' : 'hidden'">
+      <div class="form-group" *ngIf="server">
+        <label>Nom du serveur</label>
+        <input type="text" [(ngModel)]="server.name">
+      </div>
+      <div class="form-group">
+        <label>Image</label>
+        <input type="file" (change)="setThumbnail($event)" accept="image/*">
+      </div>
+      <div class="btn-submit">
+          <button class="btn btn-sb" [disabled]="loading" (click)="savePerso()">Sauvegarder</button>
+      </div>
+    </div>
+    <div class="members-list" [@showHide]="more === 'members' ? 'in' : 'hidden'">
       <div class="profile-icon" *ngFor="let m of server?.users">
         <clr-tooltip>
-            <img clrTooltipTrigger src="https://www.gravatar.com/avatar/{{m.user?._id}}?d=identicon">
+            <img clrTooltipTrigger [src]="m.user?.avatar ? PROFILE_URI_IMAGE + m.user?.avatar : 'https://www.gravatar.com/avatar/' + m.user?._id + '?d=identicon'">
             <clr-tooltip-content clrPosition="bottom-right" clrSize="xs" *clrIfOpen>
                 <span>{{m.user?.username}}</span>
             </clr-tooltip-content>
           </clr-tooltip>
         </div>
     </div>
-    <div class="params" [@showHide]="params ? 'in' : 'hidden'">
+    <div class="params" *ngIf="role === 'creator'" [@showHide]="more === 'params' ? 'in' : 'hidden'">
         <div class="form-group">
             <label class="big">Mode du salon</label>
             <div class="checkbox">
@@ -125,7 +143,7 @@
         <clr-icon shape="search"></clr-icon>
       </div>
       <div class="info-bar">
-        <span>{{sounds?.length}} sons disponibles <button (click)="addSoundModal = true" class="btn btn-sb">Ajouter</button></span>
+        <span>{{sounds?.length}} sons disponibles <button *ngIf="role === 'creator'" (click)="addSoundModal = true" class="btn btn-sb">Ajouter</button></span>
         <div class="display-options">
 
           <clr-dropdown>
@@ -164,7 +182,7 @@
                     <button type="button" class="with-icon" (click)="preview(sound)" clrDropdownItem><clr-icon shape="play"></clr-icon>Préécouter</button>
                     <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="plus"></clr-icon>Ajouter au combo</button>
                     <div class="dropdown-divider"></div>
-                    <button type="button" class="with-icon danger" (click)="delete(sound)" clrDropdownItem><clr-icon shape="trash"></clr-icon>Supprimer</button>
+                    <button type="button" class="with-icon danger" *ngIf="role === 'creator'" (click)="delete(sound)" clrDropdownItem><clr-icon shape="trash"></clr-icon>Supprimer</button>
                 </clr-dropdown-menu>
             </clr-dropdown>
           </div>

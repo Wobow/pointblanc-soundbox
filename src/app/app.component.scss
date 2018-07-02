@@ -166,3 +166,14 @@
     }
   }
 }
+.profile-divider {
+  border-color: #192A34;
+  border-top: 0;
+}
+.actions {
+  overflow: auto;
+  padding: 1em 0;
+  button { 
+    float: right;
+  }
+}

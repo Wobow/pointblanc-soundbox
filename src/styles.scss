@@ -255,6 +255,9 @@ button:focus, a:focus {
   .input-help {
     display: block;
     font-size: .5rem;
+    &.error {
+      color: #FF3939;
+    }
   }
   .icon-validation {
     position: absolute;
@@ -265,7 +268,7 @@ button:focus, a:focus {
       color: #0F0;
     }
     &.invalid {
-      color: #F00;
+      color: #C60000;
     }
   }
 }

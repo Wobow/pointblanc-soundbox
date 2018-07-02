@@ -5,6 +5,7 @@ import { AuthService } from './auth.provider';
 import { Observable } from 'rxjs/Observable';
 
 export const LOBBY_URI = '/api/lobbies';
+export const LOBBY_IMAGES = AppConfig.api + '/public/images/';
 
 @Injectable()
 export class LobbyService {
@@ -94,5 +95,18 @@ export class LobbyService {
 
   deleteLobby(serverId: string) {
     return this.http.delete(AppConfig.api + LOBBY_URI + '/' + serverId);
+  }
+
+  updateServer(lobbyId, payload) {
+    const formData = new FormData();
+    Object.keys(payload).forEach((key) => {
+      if (typeof payload[key] !== 'undefined') {
+        formData.set(key, payload[key]);
+      }
+    });
+    return this.http.put(AppConfig.api + LOBBY_URI + '/' + lobbyId, formData);
+  }
+
+  updateThumbnail(lobbyId, file) {
   }
 }

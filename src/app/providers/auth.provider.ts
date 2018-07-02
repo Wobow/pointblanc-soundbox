@@ -39,11 +39,20 @@ export class AuthService {
 
   logout() {
     this.token = undefined;
+    this.me = undefined;
     this.auth$.next(false);
     window.localStorage.removeItem('token');
   }
 
   register(username, password) {
     return this.http.post(AppConfig.api + AUTH_ROUTE + '/register', { username, password });
+  }
+
+  updateProfile(userid, formData) {
+    return this.http.put(AppConfig.api + USER_ROUTE + '/' + userid, formData);
+  }
+
+  deleteProfile() {
+    return this.http.delete(AppConfig.api + USER_ROUTE + '/' + this.me._id);
   }
 }
