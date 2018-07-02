@@ -1,0 +1,28 @@
+<div class="main-container">
+  <div class="card-invite" *ngIf="invite && !expired">
+    <h2>Invitation</h2>
+    <img [src]="img" (error)="img = '/assets/friendship.svg'">
+    <h4>{{invite?.lobby?.name}}</h4>
+    <p>Voulez-vous rejoindre <strong>{{invite?.lobby?.name}}</strong> ?</p>
+    <div class="actions">
+      <button class="btn btn-sb" (click)="joinServer()">Rejoindre</button>
+    </div>
+  </div>
+  <div class="card-invite" *ngIf="invite && expired">
+    <h2>Invitation expirée</h2>
+    <img src="/assets/late.svg">
+    <h4>{{invite?.lobby?.name}}</h4>
+    <p>L'invitation pour <strong>{{invite?.lobby?.name}}</strong> a expiré</p>
+    <div class="actions">
+      <button class="btn btn-sb" [routerLink]="['/home']">Tant pis !</button>
+    </div>
+  </div>
+  <div class="card-invite" *ngIf="error">
+    <h2>Invitation introuvable</h2>
+    <img src="/assets/lost.svg">
+    <p>Cette invitation n'existe pas</p>
+    <div class="actions">
+      <button class="btn btn-sb" [routerLink]="['/home']">Ramenez moi à la maison</button>
+    </div>
+  </div>
+</div>

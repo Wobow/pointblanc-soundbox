@@ -31,7 +31,12 @@ export class AuthService {
   isAuthenticated() {
     this.token = window.localStorage.getItem('token');
     this.auth$.next(typeof this.token === 'string');
+    this.silentlyGetMe();
     return typeof this.token === 'string';
+  }
+
+  silentlyGetMe() {
+    this.getMe().subscribe();
   }
 
   getMe() {

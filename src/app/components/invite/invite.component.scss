@@ -1,0 +1,30 @@
+.main-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  .card-invite {
+    background-color: #17242b;
+    border: 1px solid #44555E;
+    border-radius: 5px;
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 1em 5em 2em 5em;
+    align-items: center;
+    justify-content: space-around;
+    h2 {
+      margin-bottom: 1em;
+    }
+    img {
+      width: 100px;
+      height: 100px;
+    }
+    .actions {
+      width: 100%;
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

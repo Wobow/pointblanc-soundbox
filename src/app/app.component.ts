@@ -183,4 +183,8 @@ export class AppComponent implements OnInit {
     this.volumeStyle = this.sanitizer.bypassSecurityTrustStyle(getVolumeStyle(val));
     this.soundsService.setVolume(source.value / 100);
   }
+
+  emptyQueue() {
+    this.soundsService.emptyQueue();
+  }
 }

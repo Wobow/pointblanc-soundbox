@@ -42,7 +42,7 @@ export class LobbyComponent implements OnInit {
   loadingCombo;
   addSoundModal;
   loading;
-  baseURL = 'http://localhost:8080/invite/';
+  baseURL = window.location.host + '/#';
   config;
   updateConfig;
   role;
@@ -65,15 +65,25 @@ export class LobbyComponent implements OnInit {
   ) {
     this.soundService.changeStatus$.subscribe((status) => this.status = status);
     this.soundService.commandUpdate$.subscribe((command) => {
-      const cmd = this.sounds.find((c) => c._id === command._id);
-      if (cmd) {
-        cmd.played = command.played;
+      if (this.sounds) {
+        const cmd = this.sounds.find((c) => c._id === command._id);
+        if (cmd) {
+          cmd.played = command.played;
+        } else {
+          this.reloadSounds();
+        }
+      } else {
+        this.reloadSounds();
       }
     });
   }
 
   ngOnInit() {
     this.loadLobby();
+  }
+
+  reloadSounds() {
+    this.soundService.loadSoundLibrary(this.server._id).subscribe((s) => this.sounds = s);
   }
 
   loadLobby() {

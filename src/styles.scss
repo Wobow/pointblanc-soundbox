@@ -235,6 +235,10 @@ button:focus, a:focus {
       padding: 1rem;
       width: 100%;
     }
+    &.large input {
+      margin: 0!important;
+      padding: 1rem!important;
+    }
     .inset-btn {
       position: absolute;
       top: 0;

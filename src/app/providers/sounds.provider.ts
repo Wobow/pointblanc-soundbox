@@ -116,7 +116,6 @@ export class SoundsService {
       const audio = new Audio();
       audio.src = COMMAND_URL + command.url;
       audio.volume = this.volume;
-      console.log(audio.volume);
       audio.load();
       audio.play();
       if (!this.queueMode) {
@@ -143,6 +142,10 @@ export class SoundsService {
 
   closeWebSocketConnection() {
 
+  }
+
+  emptyQueue() {
+    this.queue = [];
   }
 
   loadSoundLibrary(lobbyId) {

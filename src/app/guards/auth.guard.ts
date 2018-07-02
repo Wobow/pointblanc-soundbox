@@ -8,10 +8,9 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.authService.token) {
-      console.log('checking auth', true);
       return true;
     }
-    console.log('checking auth', false);
+    this.router.navigate(['/login'], {queryParams: {redirect: state.url }});
     return false;
   }
 }
