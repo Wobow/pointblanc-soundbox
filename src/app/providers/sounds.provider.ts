@@ -116,6 +116,7 @@ export class SoundsService {
       const audio = new Audio();
       audio.src = COMMAND_URL + command.url;
       audio.volume = this.volume;
+      console.log(audio.volume);
       audio.load();
       audio.play();
       if (!this.queueMode) {
@@ -182,21 +183,22 @@ export class SoundsService {
     });
   }
 
-  playSoundByName(name: string, serverId?: string) {
-    const sound = this.getSoundByName(name);
+  playSound(sound, serverId?: string) {
+    if (!sound) { return; }
     if (!this.online) {
       this.play(sound);
     } else {
       this.publish(sound._id, serverId);
     }
   }
+
+  playSoundByName(name: string, serverId?: string) {
+    const sound = this.getSoundByName(name);
+    this.playSound(sound, serverId);
+  }
   playSoundById(id: string, serverId?: string) {
     const sound = this.getSoundById(id);
-    if (!this.online) {
-      this.play(sound);
-    } else {
-      this.publish(sound._id, serverId);
-    }
+    this.playSound(sound, serverId);
   }
 
   sendSound(name, file, lobbyId) {
@@ -205,5 +207,9 @@ export class SoundsService {
     formData.set('name', name);
     formData.set('lobby', lobbyId);
     return this.http.post(AppConfig.api + '/api/commands', formData);
+  }
+
+  playCombo(combo, serverId?) {
+    combo.forEach((c) => this.playSound(c, serverId));
   }
 }

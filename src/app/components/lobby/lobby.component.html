@@ -145,7 +145,13 @@
       <div class="info-bar">
         <span>{{sounds?.length}} sons disponibles <button *ngIf="role === 'creator'" (click)="addSoundModal = true" class="btn btn-sb">Ajouter</button></span>
         <div class="display-options">
-
+          <div class="dropdown">
+              <button type="button" class="dropdown-toggle" (click)="addCombo()" *ngIf="config?.combo.active">
+                <clr-icon shape="add" *ngIf="!comboInput"></clr-icon> 
+                <clr-icon shape="minus" *ngIf="comboInput"></clr-icon>
+                Nouveau combo
+              </button>
+          </div>
           <clr-dropdown>
               <button type="button" clrDropdownTrigger>
                   <clr-icon shape="sort-by"></clr-icon>
@@ -168,6 +174,28 @@
           </clr-dropdown>
         </div>
       </div>
+      <div class="combo-input" [@accordionShowHide]="comboInput ? 'show' : 'hide'">
+        <h4>Créer un combo <clr-icon style="float:right; cursor:pointer;" shape="close" (click)="comboInput = false"></clr-icon></h4>
+        <span class="help">Entrez le nom des commandes, séparées par des virgules</span>
+        <div class="combo-group">
+            <input type="text" placeholder="Tapez votre combo..." [(ngModel)]="currentCombo">
+            <span class="combo-info" [ngClass]="{'error': currentCombo?.split(',').length > config?.combo.options.maxCmdPerCombo}" *ngIf="config?.combo?.options?.maxCmdPerCombo">{{currentCombo?.split(',').length || 0}}/{{config?.combo.options.maxCmdPerCombo}}</span>
+            <button 
+              class="btn btn-primary" 
+              (click)="sendCombo()" 
+              type="submit" 
+              [@accordionShowHide]="currentCombo?.length && currentCombo?.split(',').length <= config?.combo.options.maxCmdPerCombo ? 'show': 'hide'"
+              [disabled]="loadingCombo"
+            >
+              <clr-icon shape="play"></clr-icon>
+            </button>
+        </div>
+        <span class="error" *ngIf="comboError">La commande "{{comboError}}" est introuvable.</span>
+        <span class="error" *ngIf="currentCombo?.split(',').length > config?.combo.options.maxCmdPerCombo">Vous ne pouvez ajouter que 6 commandes maximum en combo.</span>
+        <div class="ongoing-combo">
+
+        </div>
+      </div>
       <div class="sound-list">
         <div class="inner-sound-list">
           <div class="sound-elem" *ngFor="let sound of sounds | filterName: filter | limit: 20">
@@ -180,7 +208,7 @@
                 </button>
                 <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
                     <button type="button" class="with-icon" (click)="preview(sound)" clrDropdownItem><clr-icon shape="play"></clr-icon>Préécouter</button>
-                    <button type="button" class="with-icon" clrDropdownItem><clr-icon shape="plus"></clr-icon>Ajouter au combo</button>
+                    <button type="button" class="with-icon" *ngIf="config?.combo.active" (click)="addToCombo(sound.name)" clrDropdownItem><clr-icon shape="plus"></clr-icon>Ajouter au combo</button>
                     <div class="dropdown-divider"></div>
                     <button type="button" class="with-icon danger" *ngIf="role === 'creator'" (click)="delete(sound)" clrDropdownItem><clr-icon shape="trash"></clr-icon>Supprimer</button>
                 </clr-dropdown-menu>

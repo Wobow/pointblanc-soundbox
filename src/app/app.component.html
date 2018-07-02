@@ -1,8 +1,8 @@
 
-<div class="main-container">
+<div class="main-container" [ngClass]="{'hidden': hide}">
     <div class="alert alert-app-level">
     </div>
-    <header class="header header-8">
+    <header class="header header-8"  *ngIf="!hide">
         <div class="branding">
             <a href="#" class="nav-link" >
                 <clr-icon shape="vm-bug"></clr-icon>
@@ -36,17 +36,27 @@
     </header>
     <div class="content-container">
       <router-outlet></router-outlet>
-      <div class="playlist-overlay" align="right">
-        <div class="elem" *ngFor="let e of queue; let idx = index" (click)="remove(idx)">
-          <clr-tooltip>
-              <div clrTooltipTrigger >
-                <span>{{e.name}}</span>
-              </div>
-              <clr-tooltip-content clrPosition="top-left" clrSize="md"  *clrIfOpen>
-                  <span>Cliquez pour supprimer</span>
-              </clr-tooltip-content>
-          </clr-tooltip>
-        </div>
+      <div class="bottom-ctn">
+          <div class="playlist-actions">
+            <span class="volume-label">Volume : </span>
+            <div class="volume">
+              <span id="volume-progressbar" class="volume-progressbar" [style.background]="volumeStyle"></span>
+  					  <input type="range" min="0" max="100" step="1" value="100" id="np-volume" (change)="changeVolume($event)" class="volume-slider" role="progressbar">
+            </div>
+            <button class="btn btn-light-clear" *ngIf="queue?.length > 1">Vider la liste</button>
+          </div>
+          <div class="playlist-overlay" align="right">
+            <div class="elem" *ngFor="let e of queue; let idx = index" (click)="remove(idx)">
+              <clr-tooltip>
+                  <div clrTooltipTrigger >
+                    <span>{{e.name}}</span>
+                  </div>
+                  <clr-tooltip-content clrPosition="top-left" clrSize="md"  *clrIfOpen>
+                      <span>Cliquez pour supprimer</span>
+                  </clr-tooltip-content>
+              </clr-tooltip>
+            </div>
+          </div>
       </div>
     </div>
   </div>

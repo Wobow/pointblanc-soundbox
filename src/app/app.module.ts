@@ -34,6 +34,7 @@ import { TokenInterceptor } from './auth.interceptor';
 import {ClipboardModule} from 'ngx-clipboard';
 import { AppConfig } from './app.config';
 import { AlertService } from './providers/alert.service';
+import { PlayerComponent } from './components/player/player.component';
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -45,7 +46,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     WebviewDirective,
     LobbyComponent,
-    DashboardComponent
+    DashboardComponent,
+    PlayerComponent,
   ],
   imports: [
     BrowserModule,

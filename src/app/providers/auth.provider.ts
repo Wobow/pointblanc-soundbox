@@ -12,9 +12,14 @@ export class AuthService {
   token;
   me;
   auth$: Subject<boolean>;
-
+  mode$: Subject<string>;
   constructor(private http: HttpClient) {
     this.auth$ = new Subject();
+    this.mode$ = new Subject();
+  }
+
+  noDisplayMode() {
+    this.mode$.next('nodisplay');
   }
 
   setToken(token: any) {

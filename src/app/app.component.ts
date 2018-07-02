@@ -9,6 +9,15 @@ import { Router } from '@angular/router';
 import { AuthService } from './providers/auth.provider';
 import { AlertService } from './providers/alert.service';
 import { finalize } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
+
+const getVolumeStyle = (val) => {
+  return '-webkit-gradient(linear, left top, right top, '
+                + 'color-stop(' + 0 + ', #D57D67), '
+                + 'color-stop(' + val + ', #EDB472), '
+                + 'color-stop(' + val + ', #CCC)'
+                + ')';
+};
 
 @Component({
   selector: 'app-root',
@@ -32,6 +41,8 @@ export class AppComponent implements OnInit {
   newPassword;
   confirmDeletionModale;
   loading;
+  hide;
+  volumeStyle;
 
   constructor(
     public electronService: ElectronService,
@@ -39,6 +50,7 @@ export class AppComponent implements OnInit {
     private soundsService: SoundsService,
     private authService: AuthService,
     private router: Router,
+    private sanitizer: DomSanitizer,
     private alertService: AlertService,
     private lobbyService: LobbyService) {
 
@@ -52,6 +64,7 @@ export class AppComponent implements OnInit {
     } else {
       console.log('Mode web');
     }
+    this.volumeStyle = this.sanitizer.bypassSecurityTrustStyle(getVolumeStyle(100));
   }
 
   ngOnInit() {
@@ -75,6 +88,11 @@ export class AppComponent implements OnInit {
     });
     this.soundsService.playing$.subscribe((queue) => {
       this.queue = queue;
+    });
+    this.authService.mode$.subscribe((mode) => {
+      if (mode === 'nodisplay') {
+        this.hide = true;
+      }
     });
   }
 
@@ -157,5 +175,12 @@ export class AppComponent implements OnInit {
         },
         (err) => this.alertService.toast('Impossible de supprimer votre profile !', 'error')
       );
+  }
+
+  changeVolume($event) {
+    const source = $event.target;
+    const val = ((source.value - source.min) / (source.max - source.min));
+    this.volumeStyle = this.sanitizer.bypassSecurityTrustStyle(getVolumeStyle(val));
+    this.soundsService.setVolume(source.value / 100);
   }
 }

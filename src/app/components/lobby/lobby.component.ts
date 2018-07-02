@@ -13,7 +13,7 @@ import { AppConfig } from '../../app.config';
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
   styleUrls: ['./lobby.component.scss'],
-  animations: [Animations.showHide]
+  animations: [Animations.showHide, Animations.accordionShowHide]
 })
 export class LobbyComponent implements OnInit {
 
@@ -39,6 +39,7 @@ export class LobbyComponent implements OnInit {
   commandName;
   inviteLink;
   file;
+  loadingCombo;
   addSoundModal;
   loading;
   baseURL = 'http://localhost:8080/invite/';
@@ -47,8 +48,13 @@ export class LobbyComponent implements OnInit {
   role;
   thumbnail;
   more;
+  currentCombo;
   serverimg = '/assets/friendship.svg';
   PROFILE_URI_IMAGE = AppConfig.api + '/public/images/';
+  combo: string[];
+  comboInput;
+  comboError;
+
   constructor(
     private lobbyService: LobbyService,
     private route: ActivatedRoute,
@@ -223,5 +229,41 @@ export class LobbyComponent implements OnInit {
         },
         (err) => this.alertService.toast('Impossible de mettre à jour le serveur', 'error')
       );
+  }
+
+  addCombo() {
+    this.comboInput = !this.comboInput;
+    this.combo = [];
+  }
+
+  sendCombo() {
+    if (this.loadingCombo) { return; }
+    this.loadingCombo = true;
+    const validCommands = [];
+    const commands = this.currentCombo.split(',');
+    this.comboError = false;
+    commands.forEach((c) => {
+      const toInsert = this.sounds.find((s) => s.name === c.replace(/^\s+|\s+$/g, ''));
+      if (!toInsert) {
+        return this.comboError = c;
+      }
+      validCommands.push(toInsert);
+    });
+    if (!this.comboError) {
+      this.soundService.playCombo(validCommands, this.server._id);
+      this.currentCombo = '';
+    }
+    this.loadingCombo = false;
+  }
+
+  addToCombo(name) {
+    if (!this.comboInput) {
+      this.comboInput = true;
+    }
+    if (this.currentCombo && this.currentCombo.length) {
+      this.currentCombo += (this.currentCombo[this.currentCombo.length - 1] === ',' ? '' : ',') + name;
+    } else {
+      this.currentCombo = name;
+    }
   }
 }
