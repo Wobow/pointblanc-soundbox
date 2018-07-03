@@ -58,8 +58,10 @@ export class SoundsService {
     if (this.socket) {
       this.socket.disconnect();
     }
+    console.log(this.wsUrl);
     this.socket = io(this.wsUrl, {
       autoConnect: false,
+      secure: true,
     });
 
     // We define our observable which will observe any incoming messages
