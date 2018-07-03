@@ -54,6 +54,7 @@ export class LobbyComponent implements OnInit {
   combo: string[];
   comboInput;
   comboError;
+  twitchLink;
 
   constructor(
     private lobbyService: LobbyService,

@@ -43,6 +43,8 @@ export class AppComponent implements OnInit {
   loading;
   hide;
   volumeStyle;
+  confirmPassword;
+  twitchLink;
 
   constructor(
     public electronService: ElectronService,
