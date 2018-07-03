@@ -100,7 +100,7 @@
                 <label for="checkrads_4">Queue mode</label>
             </div>
         </div>
-        <div class="form-group">
+        <!--<div class="form-group">
             <label class="big">Twitch</label>
             <div>
                 <label for="twitch">Clé API Twitch</label>
@@ -110,17 +110,17 @@
                 <input type="checkbox" id="subOnly" [(ngModel)]="config?.subOnly.active">
                 <label for="subOnly">Sub Only</label>
             </div>
-        </div>
+        </div>-->
         <div class="form-group" [@showHide]="config?.slow.active ? 'in' : 'hidden'">
             <label class="big">Options du Slow Mode</label>
             <div>
                 <label for="interval">Interval entre deux sons (en secondes) : </label>
                 <input type="number" id="interval" [(ngModel)]="config?.slow.options.interval">
             </div>
-            <div class="checkbox">
+            <!--<div class="checkbox">
                 <input type="checkbox" id="nolimit" [(ngModel)]="config?.slow.options.noLimitForModerators">
                 <label for="nolimit">Pas de limite pour les modos</label>
-            </div>
+            </div>-->
         </div>
         <div class="form-group" [@showHide]="config?.combo.active ? 'in' : 'hidden'">
             <label class="big">Options du Combo Mode</label>
@@ -128,10 +128,10 @@
                 <label for="maxCmd">Nombre de commandes max</label>
                 <input type="number" id="maxCmd" [(ngModel)]="config?.combo.options.maxCmdPerCombo">
             </div>
-            <div class="checkbox">
+            <!--<div class="checkbox">
                 <input type="checkbox" id="nolimit" [(ngModel)]="config?.combo.options.noLimitForModerators">
                 <label for="nolimit">Pas de limite pour les modos</label>
-            </div>
+            </div>-->
         </div>
         <div class="btn-submit">
             <button class="btn btn-sb" (click)="saveConfig()">Sauvegarder</button>
@@ -152,16 +152,6 @@
                 Nouveau combo
               </button>
           </div>
-          <clr-dropdown>
-              <button type="button" clrDropdownTrigger>
-                  <clr-icon shape="sort-by"></clr-icon>
-                  Trier par {{sortType || 'nom'}}
-              </button>
-              <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
-                  <button type="button" class="with-icon" clrDropdownItem>Nom</button>
-                  <button type="button" class="with-icon" clrDropdownItem>Popularité</button>
-              </clr-dropdown-menu>
-          </clr-dropdown>
           <clr-dropdown>
               <button type="button" clrDropdownTrigger>
                   <clr-icon shape="grid-view"></clr-icon>
@@ -201,7 +191,7 @@
           <div class="sound-elem" *ngFor="let sound of sounds | filterName: filter | limit: 20">
             <div class="elem-name">
               <span>{{sound.name}}</span>
-              <button *ngIf="size === 'compact'" type="button" class="btn-icon"><clr-icon shape="play"></clr-icon></button>
+              <button *ngIf="size === 'compact'" type="button" class="btn-icon" (click)="play(sound)"><clr-icon shape="play"></clr-icon></button>
               <clr-dropdown *ngIf="size === 'details'">
                 <button type="button" clrDropdownTrigger>
                     <clr-icon shape="ellipsis-vertical"></clr-icon>

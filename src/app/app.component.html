@@ -27,7 +27,6 @@
                 <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
                     <label class="dropdown-header">Compte</label>
                     <button type="button" clrDropdownItem (click)="profileModal = true">Mon profil</button>
-                    <button type="button" clrDropdownItem>Paramètres</button>
                     <div class="dropdown-divider"></div>
                     <button type="button" clrDropdownItem [routerLink]="['/login']" (click)="logout()">Déconnexion</button>
                 </clr-dropdown-menu>
