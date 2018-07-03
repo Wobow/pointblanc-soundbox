@@ -24,7 +24,7 @@ export class SoundsService {
   }
   changeStatus$ = new Subject<boolean>();
   private _online: boolean;
-  private wsUrl = 'ws://' + AppConfig.api.split(/https?:\/\//).join('');
+  private wsUrl = AppConfig.api.split(/https?:\/\//).join('');
   private socketInterface: Subject<MessageEvent>;
   private socket;
   queueEmpty = true;
