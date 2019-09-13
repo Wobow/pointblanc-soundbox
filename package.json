@@ -40,9 +40,12 @@
     "@clr/ui": "^0.11.18",
     "@types/socket.io-client": "^1.4.32",
     "@webcomponents/custom-elements": "^1.1.0",
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
     "ng2-nouislider": "^1.7.8",
     "ngx-clipboard": "^10.0.0",
     "nouislider": "^11.1.0",
+    "popper.js": "^1.15.0",
     "socket.io-client": "^2.1.0"
   },
   "devDependencies": {
