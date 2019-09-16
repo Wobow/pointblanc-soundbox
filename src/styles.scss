@@ -184,7 +184,7 @@ button:focus, a:focus {
 }
 
 .page-container {
-  width: 100vw;
+  min-width: 100vw;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
