@@ -19,7 +19,7 @@ export class LobbyComponent implements OnInit {
 
   server;
   sounds;
-  size = 'details';
+  size = 'compact';
   status;
   queueMode;
   slowMode;
