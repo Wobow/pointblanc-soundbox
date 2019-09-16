@@ -200,7 +200,10 @@
     float: right;
   }
 }
-
+.main-container {
+  height: inherit;
+  min-height: 100vh;
+}
 .main-container.hidden {
     display: none!important;
 }

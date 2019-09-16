@@ -143,7 +143,7 @@
         <clr-icon shape="search"></clr-icon>
       </div>
       <div class="info-bar">
-        <span>{{sounds?.length}} sons disponibles <button *ngIf="role === 'creator'" (click)="addSoundModal = true" class="btn btn-sb">Ajouter</button></span>
+        <span>{{sounds?.length}} sons disponibles <button *ngIf="role === 'creator' || role === 'admin'" (click)="addSoundModal = true" class="btn btn-sb">Ajouter</button></span>
         <div class="display-options">
           <div class="dropdown">
               <button type="button" class="dropdown-toggle" (click)="addCombo()" *ngIf="config?.combo.active">
@@ -189,27 +189,28 @@
       <div class="sound-list">
         <div class="inner-sound-list">
           <div class="sound-elem" *ngFor="let sound of sounds | filterName: filter | limit: 20">
-            <div class="elem-name">
-              <span>{{sound.name}}</span>
-              <button *ngIf="size === 'compact'" type="button" class="btn-icon" (click)="play(sound)"><clr-icon shape="play"></clr-icon></button>
-              <clr-dropdown *ngIf="size === 'details'">
-                <button type="button" clrDropdownTrigger>
-                    <clr-icon shape="ellipsis-vertical"></clr-icon>
-                </button>
-                <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
-                    <button type="button" class="with-icon" (click)="preview(sound)" clrDropdownItem><clr-icon shape="play"></clr-icon>Préécouter</button>
-                    <button type="button" class="with-icon" *ngIf="config?.combo.active" (click)="addToCombo(sound.name)" clrDropdownItem><clr-icon shape="plus"></clr-icon>Ajouter au combo</button>
-                    <div class="dropdown-divider"></div>
-                    <button type="button" class="with-icon danger" *ngIf="role === 'creator'" (click)="delete(sound)" clrDropdownItem><clr-icon shape="trash"></clr-icon>Supprimer</button>
-                </clr-dropdown-menu>
-            </clr-dropdown>
-          </div>
-          <div class="sound-description" [@showHide]="size === 'compact' ? 'hidden': 'in'">
-            Joué {{sound.played || 0}} fois
-          </div>
-            <div class="sound-action"  [@showHide]="size === 'compact' ? 'hidden': 'in'">
-              <button class="btn-sound-action with-icon"  (click)="play(sound)"><clr-icon shape="play"></clr-icon> Lire</button>
-              <button class="btn-sound-action with-icon"><clr-icon shape="heart"></clr-icon> Favoris</button>
+            <div class="border-elem">
+              <div class="elem-name">
+                <span>{{sound.name}}</span>
+                <button *ngIf="size === 'compact'" type="button" class="btn-icon" (click)="play(sound)"><clr-icon shape="play"></clr-icon></button>
+                <clr-dropdown *ngIf="size === 'details'">
+                  <button type="button" clrDropdownTrigger>
+                      <clr-icon shape="ellipsis-vertical"></clr-icon>
+                  </button>
+                  <clr-dropdown-menu [clrPosition]="'bottom-right'" *clrIfOpen>
+                      <button type="button" class="with-icon" (click)="preview(sound)" clrDropdownItem><clr-icon shape="play"></clr-icon>Préécouter</button>
+                      <button type="button" class="with-icon" *ngIf="config?.combo.active" (click)="addToCombo(sound.name)" clrDropdownItem><clr-icon shape="plus"></clr-icon>Ajouter au combo</button>
+                      <div class="dropdown-divider"></div>
+                      <button type="button" class="with-icon danger" *ngIf="role === 'creator'" (click)="delete(sound)" clrDropdownItem><clr-icon shape="trash"></clr-icon>Supprimer</button>
+                  </clr-dropdown-menu>
+              </clr-dropdown>
+            </div>
+            <div class="sound-description" [@showHide]="size === 'compact' ? 'hidden': 'in'">
+              Joué {{sound.played || 0}} fois
+            </div>
+              <div class="sound-action"  [@showHide]="size === 'compact' ? 'hidden': 'in'">
+                <button class="btn-sound-action with-icon"  (click)="play(sound)"><clr-icon shape="play"></clr-icon> Lire</button>
+              </div>
             </div>
           </div>
         </div>

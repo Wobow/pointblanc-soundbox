@@ -6,5 +6,5 @@
 export const CONF_DEV = {
   production: false,
   environment: 'DEV',
-  api: 'http://localhost:4242',
+  api: 'https://morbak.alan-balbo.com',
 };
